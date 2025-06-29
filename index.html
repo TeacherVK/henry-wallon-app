@@ -19,7 +19,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .hw-blue-bg { background-color: #003366; } .hw-blue-text { color: #003366; } .hw-red { color: #D72828; } .hw-yellow { background-color: #FFD700; }
-        #test-screen, #results-screen, #dev-toggle-button, #review-screen, #section-modal { display: none; }
+        #test-screen, #results-screen, #review-screen, #section-modal { display: none; }
         .option-btn { transition: all 0.2s ease-in-out; border: 2px solid transparent; } .option-btn:hover { transform: translateY(-2px); border-color: #003366; }
         .option-btn.selected { background-color: #003366; color: white; border-color: #003366; }
         #timer { animation: pulse 2s infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
@@ -54,15 +54,6 @@
                     <ul class="list-disc list-inside mt-2 text-sm"><li>No cierres esta página.</li><li>Solo puedes responder una vez.</li></ul>
                 </div>
                 <button id="start-btn" class="mt-8 w-full hw-blue-bg text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-opacity-90 transition-all duration-300 shadow-lg">Comenzar Examen</button>
-                
-                <!-- Nueva Sección para Compartir -->
-                <div class="mt-8 pt-6 border-t border-gray-200 text-center">
-                    <p class="font-semibold mb-2">Comparte este examen:</p>
-                    <a id="share-page-whatsapp-btn" href="#" target="_blank" class="inline-flex items-center justify-center bg-green-500 text-white font-bold py-2 px-5 rounded-lg hover:bg-green-600 transition-colors">
-                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.655 4.357 1.849 6.081l-1.214 4.439 4.572-1.202z M8.228 7.334c.193-.459.139-.959-.139-1.314-.276-.356-.63-.57-.999-.57h-.043c-.367 0-.72.13-1.011.381-.29.25-.503.583-.627.959-.123.376-.185.799-.163 1.228.023.429.167.851.411 1.231.242.38.58.758 1.005 1.123.423.366.901.701 1.426.989.525.288 1.101.515 1.712.668.61.153 1.265.229 1.96.229.67 0 1.315-.098 1.912-.295.598-.197 1.153-.495 1.658-.879.506-.384.951-.831 1.32-1.32.368-.489.659-1.021.861-1.581.202-.56.304-1.14.282-1.718-.022-.577-.167-1.132-.428-1.644s-.623-.942-1.057-1.27-1.01-.502-1.58-.502h-.043c-.59 0-1.133.248-1.513.681-.381.433-.646.999-.772 1.592-.126.592-.07 1.215.158 1.756.229.541.58 1.005 1.031 1.36.452.354.98.61 1.542.758.562.148 1.153.22 1.756.22.602 0 1.18-.072 1.707-.218.527-.146 1.01-.383 1.432-.701.423-.318.78-.71 1.062-1.157.283-.447.47-.93.552-1.426.082-.496.043-1.011-.119-1.488-.161-.477-.422-.901-.768-1.248-.346-.347-.772-.61-1.24-.768-.468-.158-.96-.23-1.455-.218-.495.012-.98.116-1.432.318s-.86.495-1.19.851c-.33.356-.562.772-.681 1.215-.119.443-.139.909-.043 1.36.095.451.297.875.58 1.24s.639.668 1.031.879c.393.21 1.13.468 1.455.318.325-.15.468-.422.468-.422s.14-.082.283-.283c.143-.201.202-.346.22-.422.018-.076.018-.173 0-.283-.018-.109-.158-.262-.318-.443-.161-.181-.363-.346-.58-.468-.218-.123-.477-.202-.746-.24-.27-.038-.539-.018-.799.082-.26.1-.5.283-.681.527-.181.243-.301.527-.346.828-.046.301-.018.61.082.901.1.29.283.562.527.772.243.21.527.363.828.443.301.082.6.095.889.043.29-.052.562-.173.799-.346.238-.174.452-.411.627-.681.174-.27.301-.577.363-.889.062-.312.052-.639-.018-.951-.07-.312-.21-.602-.411-.86-.201-.258-.452-.477-.746-.639-.294-.161-.61-.258-.93-.283-.32-.025-.648.025-.951.151-.303.125-.577.318-.807.562-.229.244-.411.541-.527.879-.116.338-.161.69-.126 1.031z"/></svg>
-                        Compartir por WhatsApp
-                    </a>
-                </div>
             </div>
         </div>
         <!-- 2. Pantalla del Examen -->
@@ -95,7 +86,7 @@
                     </a>
                 </div>
                 <div class="mt-8"><p class="mb-4 font-semibold text-gray-700">Tus resultados han sido guardados y enviados al administrador. ¡Gracias!</p></div>
-                <div class="mt-8 text-xs text-gray-500"><p>Creado por Tchr V. Barrientos</p><button id="dev-toggle-button-results" class="text-blue-500 underline">Modo Desarrollador</button></div>
+                <div class="mt-8 text-xs text-gray-500"><p>Creado por Tchr V. Barrientos</p></div>
             </div>
         </div>
         <!-- 4. Pantalla de Revisión -->
@@ -106,7 +97,6 @@
             </div>
             <div id="review-container" class="space-y-6"></div>
         </div>
-        <button id="dev-toggle-button" class="fixed bottom-4 right-4 bg-yellow-400 text-black p-2 rounded-full shadow-lg">Dev: Reset</button>
     </div>
 
     <script type="module">
@@ -130,7 +120,7 @@
         
         const testDurationMinutes = 45;
         const questions = [
-            // Grammar (15 questions)
+            // Grammar (25 questions)
             { type: 'grammar', question: "I ___ to the store yesterday.", options: ["go", "went", "gone", "going"], answer: "went" },
             { type: 'grammar', question: "She ___ a doctor.", options: ["is", "are", "am", "be"], answer: "is" },
             { type: 'grammar', question: "They have ___ their homework.", options: ["do", "did", "done", "doing"], answer: "done" },
@@ -146,7 +136,17 @@
             { type: 'grammar', question: "I wish I ___ speak French.", options: ["can", "can to", "could", "would"], answer: "could" },
             { type: 'grammar', question: "This is the house ___ I grew up.", options: ["which", "that", "where", "who"], answer: "where" },
             { type: 'grammar', question: "Neither of the answers ___ correct.", options: ["is", "are", "be", "were"], answer: "is" },
-            // Proofreading (15 questions)
+            { type: 'grammar', question: "He is used to ___ up early.", options: ["get", "getting", "got", "gets"], answer: "getting" },
+            { type: 'grammar', question: "The test was difficult, ___ I think I did well.", options: ["so", "but", "because", "although"], answer: "but" },
+            { type: 'grammar', question: "I'm looking forward ___ you again.", options: ["to see", "seeing", "to seeing", "see"], answer: "to seeing" },
+            { type: 'grammar', question: "She has lived here ___ 2010.", options: ["for", "since", "from", "at"], answer: "since" },
+            { type: 'grammar', question: "If it ___, we will cancel the picnic.", options: ["rain", "rains", "will rain", "rained"], answer: "rains" },
+            { type: 'grammar', question: "He ___ for the company for ten years before he retired.", options: ["works", "has worked", "had worked", "is working"], answer: "had worked" },
+            { type: 'grammar', question: "The problem was ___ difficult for me to solve.", options: ["so", "very", "too", "enough"], answer: "too" },
+            { type: 'grammar', question: "I'd rather you ___ that.", options: ["don't do", "didn't do", "not do", "won't do"], answer: "didn't do" },
+            { type: 'grammar', question: "Not only ___ sing, but she also plays the piano.", options: ["can she", "she can", "she does", "does she"], answer: "can she" },
+            { type: 'grammar', question: "The manager had the report ___ by his assistant.", options: ["write", "wrote", "written", "writing"], answer: "written" },
+            // Proofreading (20 questions)
             { type: 'proofreading', question: "Me and my friends went to the park.", options: ["Me", "friends", "went", "park"], answer: "Me" },
             { type: 'proofreading', question: "There's to many people in this room.", options: ["There's", "to", "many", "room"], answer: "to" },
             { type: 'proofreading', question: "The dog lost it's bone.", options: ["dog", "lost", "it's", "bone"], answer: "it's" },
@@ -162,16 +162,23 @@
             { type: 'proofreading', question: "I am very exciting about the trip.", options: ["am", "very", "exciting", "about"], answer: "exciting" },
             { type: 'proofreading', question: "Between you and I, this is a secret.", options: ["Between", "you and I", "this is", "a secret"], answer: "you and I" },
             { type: 'proofreading', question: "The amount of cars on the road is increasing.", options: ["amount", "cars", "on the road", "is"], answer: "amount" },
-            // Reading (2 long texts)
+            { type: 'proofreading', question: "Each of the boys get a prize.", options: ["Each", "boys", "get", "prize"], answer: "get" },
+            { type: 'proofreading', question: "I'm not sure if I can except your offer.", options: ["sure", "if", "except", "offer"], answer: "except" },
+            { type: 'proofreading', question: "The cat is sleeping on the couch, it looks tired.", options: ["cat", "is sleeping", "couch", "it"], answer: "it" },
+            { type: 'proofreading', question: "They're going to there house after school.", options: ["They're", "going", "there", "house"], answer: "there" },
+            { type: 'proofreading', question: "Your a very talented artist.", options: ["Your", "a", "very", "talented"], answer: "Your" },
+            // Reading (3 long texts)
             { type: 'reading', text: "The phenomenon of urban heat islands (UHIs) is a significant environmental challenge facing cities worldwide. A UHI is a metropolitan area that is significantly warmer than its surrounding rural areas due to human activities. The main cause is the modification of land surfaces. Materials like concrete and asphalt, common in cities, absorb and retain more of the sun's heat than natural landscapes like forests and water bodies. This retained heat is then released, particularly at night, keeping the city warmer. Waste heat generated by energy usage is a secondary contributor. UHIs can have serious consequences, including increased energy consumption for cooling, elevated emissions of air pollutants and greenhouse gases, compromised human health and comfort, and impaired water quality. To mitigate these effects, cities are implementing strategies such as increasing tree and vegetative cover, installing green roofs, and using cool, reflective materials for pavements and roofs.", sub_questions: [ { question: "What is the primary cause of the urban heat island effect?", options: ["Air pollution from cars", "The modification of land surfaces with heat-absorbing materials", "Waste heat from industrial factories", "A lack of wind in cities"], answer: "The modification of land surfaces with heat-absorbing materials" }, { question: "Which of the following is NOT mentioned as a consequence of UHIs?", options: ["Higher energy bills for air conditioning", "Better water quality in rivers", "Increased air pollution", "Negative impacts on human health"], answer: "Better water quality in rivers" }, { question: "What is a 'cool roof' designed to do?", options: ["Absorb more heat", "Reflect more sunlight", "Generate electricity", "Store rainwater"], answer: "Reflect more sunlight" } ] },
             { type: 'reading', text: "The history of cryptography, the practice of secure communication, is as old as writing itself. Ancient civilizations used simple methods to conceal messages. The Spartans, for example, used a scytale, a cylinder with a strip of parchment wound around it, to create a transposition cipher. Julius Caesar used a simple substitution cipher, shifting each letter by a set number of places in the alphabet. For centuries, these methods were sufficient. However, the advent of frequency analysis in the 9th century by Arab scholar Al-Kindi rendered most simple substitution ciphers insecure. This led to the development of more complex polyalphabetic ciphers, like the Vigenère cipher, which were considered unbreakable for centuries. The real revolution came in the 20th century with the invention of mechanical and electronic devices, such as the Enigma machine used by Germany in World War II. The successful breaking of Enigma by Allied cryptanalysts, including Alan Turing, was a pivotal moment in the war and the history of computing. Today, cryptography is based on complex mathematical principles and is essential for securing everything from e-commerce to national security.", sub_questions: [ { question: "What was the main weakness of simple substitution ciphers like Caesar's?", options: ["They were too difficult to use", "They were vulnerable to frequency analysis", "They required a special machine", "They could only be used for short messages"], answer: "They were vulnerable to frequency analysis" }, { question: "What was the Enigma machine?", options: ["A type of polyalphabetic cipher", "A tool for frequency analysis", "An ancient Greek cryptographic device", "A mechanical and electronic cipher machine"], answer: "A mechanical and electronic cipher machine" }, { question: "What is modern cryptography primarily based on?", options: ["Letter substitution", "Mechanical devices", "Complex mathematical principles", "Transposition of letters"], answer: "Complex mathematical principles" } ] },
-            // Listening (YouTube Video)
-            { type: 'listening', videoId: 'E-Y1CNWmVrg', sub_questions: [ { question: "1. Which of these things did Emma do?", options: ["Left home early", "Take a train", "Made a good impression with her interviewer"], answer: "Made a good impression with her interviewer" }, { question: "2. Which of these things did Emma NOT do?", options: ["Book a taxi", "Pack her things in the morning", "Reschedule the interview"], answer: "Reschedule the interview" }, { question: "3. Which of these things did Tyler do?", options: ["Listen to his friend", "Raise his voice", "Take a step back"], answer: "Take a step back" }, { question: "4. Which of these things did Tyler NOT do?", options: ["Misunderstand his friend", "Have patience", "Apologise several times"], answer: "Have patience" }, { question: "5. Which of these things did James do?", options: ["See that her colleague was struggling", "Ask his colleague if she needed support", "Learn something from helping her"], answer: "Learn something from helping her" } ] },
+            { type: 'reading', text: "The concept of emotional intelligence (EQ) was popularized in the 1990s by psychologist Daniel Goleman. It refers to the ability to perceive, control, and evaluate emotions—in oneself and others. Goleman's model outlines five main components of EQ: self-awareness (knowing one's emotions), self-regulation (managing one's emotions), motivation (harnessing emotions to achieve goals), empathy (recognizing emotions in others), and social skills (handling relationships). Research suggests that a high EQ is a strong predictor of success in life, often more so than a high IQ (intelligence quotient). Individuals with high emotional intelligence are better able to navigate social complexities, lead and motivate others, and excel in their careers. Unlike IQ, which is believed to be largely stable throughout life, emotional intelligence can be learned and developed with practice.", sub_questions: [ { question: "What is the main idea of the text?", options: ["IQ is more important than EQ", "Emotional intelligence is a fixed trait", "Emotional intelligence is a key factor for success and can be developed", "Daniel Goleman invented emotional intelligence"], answer: "Emotional intelligence is a key factor for success and can be developed" }, { question: "Which component of EQ involves managing one's own emotions?", options: ["Empathy", "Motivation", "Self-awareness", "Self-regulation"], answer: "Self-regulation" }, { question: "According to the text, how does EQ differ from IQ?", options: ["EQ is less important for career success", "EQ can be improved, while IQ is relatively stable", "Only a few people can have a high EQ", "IQ is about emotions, and EQ is about logic"], answer: "EQ can be improved, while IQ is relatively stable" } ] },
+            // Listening (2 YouTube Videos)
+            { type: 'listening', videoId: 'E-Y1CNWmVrg', sub_questions: [ { question: "Which of these things did Emma do?", options: ["Left home early", "Take a train", "Made a good impression with her interviewer"], answer: "Made a good impression with her interviewer" }, { question: "Which of these things did Tyler do?", options: ["Listen to his friend", "Raise his voice", "Take a step back"], answer: "Take a step back" }, { question: "Which of these things did James do?", options: ["See that her colleague was struggling", "Ask his colleague if she needed support", "Learn something from helping her"], answer: "Learn something from helping her" } ] },
+            { type: 'listening', videoId: '5-0t8343I3s', sub_questions: [ { question: "What is the main topic of this short story?", options: ["A trip to the beach", "A visit to a new city", "A story about a lost cat", "A birthday party"], answer: "A story about a lost cat" }, { question: "What is the cat's name?", options: ["Leo", "Max", "Tiger", "Jasper"], answer: "Jasper" }, { question: "How did the owner feel when she found her cat?", options: ["Angry", "Sad", "Relieved", "Confused"], answer: "Relieved" } ] },
             // Writing
             { type: 'writing', question: "What is your opinion on the importance of learning a second language? Discuss the advantages it can bring to a person's life and career." }
         ];
 
-        const startScreen = document.getElementById('start-screen'), testScreen = document.getElementById('test-screen'), resultsScreen = document.getElementById('results-screen'), reviewScreen = document.getElementById('review-screen'), startBtn = document.getElementById('start-btn'), userInfoForm = document.getElementById('user-info-form'), examTimeEl = document.getElementById('examTime'), timerEl = document.getElementById('timer'), questionContainer = document.getElementById('question-container'), progressBar = document.getElementById('progress-bar'), nextBtn = document.getElementById('next-btn'), prevBtn = document.getElementById('prev-btn'), devToggleBtn = document.getElementById('dev-toggle-button'), devToggleBtnResults = document.getElementById('dev-toggle-button-results'), reviewAnswersBtn = document.getElementById('review-answers-btn'), downloadPdfBtn = document.getElementById('download-pdf-btn'), reviewContainer = document.getElementById('review-container'), backToResultsBtn = document.getElementById('back-to-results-btn'), whatsappShareBtn = document.getElementById('whatsapp-share-btn'), modalCloseBtn = document.getElementById('modal-close-btn'), sectionModal = document.getElementById('section-modal'), modalTitle = document.getElementById('modal-title'), modalInstruction = document.getElementById('modal-instruction'), sharePageBtn = document.getElementById('share-page-btn'), qrCodeImg = document.getElementById('qr-code');
+        const startScreen = document.getElementById('start-screen'), testScreen = document.getElementById('test-screen'), resultsScreen = document.getElementById('results-screen'), reviewScreen = document.getElementById('review-screen'), startBtn = document.getElementById('start-btn'), userInfoForm = document.getElementById('user-info-form'), examTimeEl = document.getElementById('examTime'), timerEl = document.getElementById('timer'), questionContainer = document.getElementById('question-container'), progressBar = document.getElementById('progress-bar'), nextBtn = document.getElementById('next-btn'), prevBtn = document.getElementById('prev-btn'), devToggleBtn = document.getElementById('dev-toggle-button'), devToggleBtnResults = document.getElementById('dev-toggle-button-results'), reviewAnswersBtn = document.getElementById('review-answers-btn'), downloadPdfBtn = document.getElementById('download-pdf-btn'), reviewContainer = document.getElementById('review-container'), backToResultsBtn = document.getElementById('back-to-results-btn'), whatsappShareBtn = document.getElementById('whatsapp-share-btn'), modalCloseBtn = document.getElementById('modal-close-btn'), sectionModal = document.getElementById('section-modal'), modalTitle = document.getElementById('modal-title'), modalInstruction = document.getElementById('modal-instruction');
         let currentQuestionIndex = 0, userAnswers = new Array(questions.length).fill(null), timerInterval, testStartTime, userData = {}, finalResults = {}, lastShownSection = null;
         
         function renderQuestion(index) {
@@ -233,7 +240,7 @@
         nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
         prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
         function startTimer() { let timeLeft = testDurationMinutes * 60; timerInterval = setInterval(() => { timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { clearInterval(timerInterval); alert('¡Tiempo terminado!'); finishTest(); } }, 1000); }
-        function startTest() { if (!userInfoForm.checkValidity()) { userInfoForm.reportValidity(); return; } userData = { fullName: document.getElementById('fullName').value, section: document.getElementById('section').value, school: document.getElementById('school').value, examTime: testStartTime.toLocaleString('es-MX') }; localStorage.setItem('henryWallonTestTaken', 'true'); startScreen.style.display = 'none'; testScreen.style.display = 'block'; devToggleBtn.style.display = 'none'; renderQuestion(currentQuestionIndex); startTimer(); }
+        function startTest() { if (!userInfoForm.checkValidity()) { userInfoForm.reportValidity(); return; } userData = { fullName: document.getElementById('fullName').value, section: document.getElementById('section').value, school: document.getElementById('school').value, examTime: testStartTime.toLocaleString('es-MX') }; localStorage.setItem('henryWallonTestTaken', 'true'); startScreen.style.display = 'none'; testScreen.style.display = 'block'; renderQuestion(currentQuestionIndex); startTimer(); }
         function finishTest() { clearInterval(timerInterval); finalResults = calculateResults(); showResults(finalResults); saveResultsToFirestore(finalResults); }
         function calculateResults() {
             let score = 0, scorableQuestions = 0;
@@ -253,7 +260,6 @@
         function showResults(results) {
             testScreen.style.display = 'none';
             resultsScreen.style.display = 'block';
-            devToggleBtnResults.style.display = 'block';
             document.getElementById('final-score').textContent = `Puntuación: ${results.score} de ${results.total}`;
             document.getElementById('final-level').textContent = results.level;
             document.getElementById('level-description').textContent = results.description;
@@ -273,8 +279,7 @@
             setTimeout(() => { document.body.removeChild(iframe); }, 1000);
         }
         async function saveResultsToFirestore(results) { const writingQuestionObject = questions.find(q => q.type === 'writing'); const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta."; try { await addDoc(collection(db, "results"), { fullName: userData.fullName, section: userData.section, school: userData.school, examDate: new Date(), score: results.score, totalQuestions: results.total, level: results.level, writingAnswer: writingAnswer }); } catch (e) { console.error("Error adding document: ", e); } }
-        function checkTestStatus() { if (localStorage.getItem('henryWallonTestTaken')) { startBtn.textContent = 'Ya has realizado este examen'; startBtn.disabled = true; startBtn.classList.add('opacity-50'); devToggleBtn.style.display = 'block'; } }
-        function resetTestState() { if (confirm('¿Estás seguro?')) { localStorage.removeItem('henryWallonTestTaken'); location.reload(); } }
+        function checkTestStatus() { if (localStorage.getItem('henryWallonTestTaken')) { startBtn.textContent = 'Ya has realizado este examen'; startBtn.disabled = true; startBtn.classList.add('opacity-50'); } }
         
         function getRecommendations(level) {
             const recommendations = {
@@ -291,10 +296,6 @@
             modalTitle.textContent = titles[type] || 'Nueva Sección';
             modalInstruction.textContent = instructions[type] || 'Prepárate para la siguiente sección.';
             sectionModal.style.display = 'flex';
-        }
-        function generateQRCode() {
-            const url = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}`;
-            qrCodeImg.src = url;
         }
         function renderReview() {
             reviewContainer.innerHTML = '';
@@ -327,12 +328,7 @@
 
         window.onload = () => {
             const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAEAASURBVHgB7N15lFTV+T/wn3t3l3Z3d3d3d3d3d3d3l3Z3d5e7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u-D-Y1CNWmVrg';
-            // Attach all event listeners here to ensure DOM is ready
             startBtn.addEventListener('click', startTest);
-            nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
-            prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
-            devToggleBtn.addEventListener('click', resetTestState);
-            devToggleBtnResults.addEventListener('click', resetTestState);
             downloadPdfBtn.addEventListener('click', () => {
                 const doc = new jsPDF();
                 if (logoBase64) { doc.addImage(logoBase64, 'PNG', 15, 10, 50, 25); }
@@ -354,33 +350,13 @@
             reviewAnswersBtn.addEventListener('click', () => { resultsScreen.style.display = 'none'; reviewScreen.style.display = 'block'; renderReview(); });
             backToResultsBtn.addEventListener('click', () => { reviewScreen.style.display = 'none'; resultsScreen.style.display = 'block'; });
             modalCloseBtn.addEventListener('click', () => { sectionModal.style.display = 'none'; });
-            
-            const sharePageBtn = document.getElementById('share-page-btn');
-            if(sharePageBtn) {
-                sharePageBtn.addEventListener('click', async () => {
-                    const shareData = { title: 'Henry Wallon Placement Test', text: 'Realiza este examen de colocación de inglés.', url: window.location.href };
-                    try {
-                        if (navigator.share) {
-                            await navigator.share(shareData);
-                        } else {
-                            navigator.clipboard.writeText(window.location.href);
-                            alert('¡Enlace copiado al portapapeles!');
-                        }
-                    } catch (err) {
-                        console.error("Error al compartir:", err);
-                    }
-                });
-            }
 
             // Initial setup calls
             checkTestStatus();
-            const qrCodeImg = document.getElementById('qr-code');
-            if(qrCodeImg) {
-                generateQRCode();
-            }
             testStartTime = new Date();
             examTimeEl.textContent = testStartTime.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
         };
     </script>
 </body>
 </html>
+
