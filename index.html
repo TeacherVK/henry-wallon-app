@@ -59,7 +59,7 @@
         <!-- 2. Pantalla del Examen -->
         <div id="test-screen">
             <header class="bg-white p-4 rounded-2xl shadow-lg mb-6 sticky top-4 z-10">
-                <div class="flex justify-between items-center"><h2 class="text-xl font-bold hw-blue-text">Henry Wallon Test</h2><div id="timer" class="text-2xl font-extrabold text-white bg-red-600 px-4 py-2 rounded-lg shadow-md">45:00</div></div>
+                <div class="flex justify-between items-center"><h2 class="text-xl font-bold hw-blue-text">Henry Wallon Test</h2><div id="timer" class="text-2xl font-extrabold text-white bg-red-600 px-4 py-2 rounded-lg shadow-md">60:00</div></div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progress-bar" class="bg-hw-yellow h-2.5 rounded-full" style="width: 0%"></div></div>
             </header>
             <div id="question-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl min-h-[300px]"></div>
@@ -118,7 +118,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        const testDurationMinutes = 45;
+        const testDurationMinutes = 60; // Timer ajustado a 60 minutos
         const questions = [
             // Grammar (25 questions)
             { type: 'grammar', question: "I ___ to the store yesterday.", options: ["go", "went", "gone", "going"], answer: "went" },
@@ -222,7 +222,7 @@
                 });
             } else if (q.type === 'writing') {
                 const currentAnswer = userAnswers[index] || '';
-                html += `<h3 class="text-xl md:text-2xl font-semibold mb-4">${q.question}</h3><textarea id="writing-answer" class="w-full h-48 p-3 border rounded-lg" oninput="saveWritingAnswer(${index})">${currentAnswer}</textarea>`;
+                html += `<h3 class="text-xl md:text-2xl font-semibold mb-4">${q.question}</h3><textarea id="writing-answer" class="w-full h-48 p-3 border rounded-lg" onpaste="return false;" oninput="saveWritingAnswer(${index})">${currentAnswer}</textarea>`;
             }
             questionContainer.innerHTML = html;
             if (q.type === 'listening') loadYouTubePlayer(q.videoId);
@@ -359,3 +359,4 @@
     </script>
 </body>
 </html>
+
