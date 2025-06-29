@@ -118,55 +118,55 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        const testDurationMinutes = 60; // Timer ajustado a 60 minutos
+        const testDurationMinutes = 60;
         const questions = [
             // Grammar (25 questions)
-            { type: 'grammar', question: "I ___ to the store yesterday.", options: ["go", "went", "gone", "going"], answer: "went" },
-            { type: 'grammar', question: "She ___ a doctor.", options: ["is", "are", "am", "be"], answer: "is" },
-            { type: 'grammar', question: "They have ___ their homework.", options: ["do", "did", "done", "doing"], answer: "done" },
-            { type: 'grammar', question: "He is ___ than his brother.", options: ["tall", "taller", "tallest", "more tall"], answer: "taller" },
-            { type: 'grammar', question: "If I ___ you, I would study more.", options: ["was", "am", "were", "be"], answer: "were" },
-            { type: 'grammar', question: "There isn't ___ sugar left.", options: ["many", "much", "some", "a lot"], answer: "much" },
-            { type: 'grammar', question: "The book ___ by Mark Twain.", options: ["was written", "wrote", "is writing", "write"], answer: "was written" },
-            { type: 'grammar', question: "I've been waiting ___ two hours.", options: ["since", "for", "at", "on"], answer: "for" },
-            { type: 'grammar', question: "My keys are not on the table. I must ___ them at home.", options: ["leave", "have left", "left", "leaving"], answer: "have left" },
-            { type: 'grammar', question: "She asked me ___ I was doing.", options: ["what", "that", "if", "which"], answer: "what" },
-            { type: 'grammar', question: "By the time the police arrived, the thief ___.", options: ["escapes", "had escaped", "has escaped", "was escaping"], answer: "had escaped" },
-            { type: 'grammar', question: "You ___ touch that, it's dangerous.", options: ["mustn't", "don't have to", "couldn't", "should"], answer: "mustn't" },
-            { type: 'grammar', question: "I wish I ___ speak French.", options: ["can", "can to", "could", "would"], answer: "could" },
-            { type: 'grammar', question: "This is the house ___ I grew up.", options: ["which", "that", "where", "who"], answer: "where" },
-            { type: 'grammar', question: "Neither of the answers ___ correct.", options: ["is", "are", "be", "were"], answer: "is" },
-            { type: 'grammar', question: "He is used to ___ up early.", options: ["get", "getting", "got", "gets"], answer: "getting" },
-            { type: 'grammar', question: "The test was difficult, ___ I think I did well.", options: ["so", "but", "because", "although"], answer: "but" },
-            { type: 'grammar', question: "I'm looking forward ___ you again.", options: ["to see", "seeing", "to seeing", "see"], answer: "to seeing" },
-            { type: 'grammar', question: "She has lived here ___ 2010.", options: ["for", "since", "from", "at"], answer: "since" },
-            { type: 'grammar', question: "If it ___, we will cancel the picnic.", options: ["rain", "rains", "will rain", "rained"], answer: "rains" },
-            { type: 'grammar', question: "He ___ for the company for ten years before he retired.", options: ["works", "has worked", "had worked", "is working"], answer: "had worked" },
-            { type: 'grammar', question: "The problem was ___ difficult for me to solve.", options: ["so", "very", "too", "enough"], answer: "too" },
-            { type: 'grammar', question: "I'd rather you ___ that.", options: ["don't do", "didn't do", "not do", "won't do"], answer: "didn't do" },
-            { type: 'grammar', question: "Not only ___ sing, but she also plays the piano.", options: ["can she", "she can", "she does", "does she"], answer: "can she" },
-            { type: 'grammar', question: "The manager had the report ___ by his assistant.", options: ["write", "wrote", "written", "writing"], answer: "written" },
+            { type: 'grammar', question: "I ___ to the store yesterday.", options: ["go", "went", "gone", "going"], answer: "went", explanation: "Para acciones pasadas terminadas, se usa el Pasado Simple (went)." },
+            { type: 'grammar', question: "She ___ a doctor.", options: ["is", "are", "am", "be"], answer: "is", explanation: "Para la tercera persona del singular (She, He, It) en presente, se usa 'is'." },
+            { type: 'grammar', question: "They have ___ their homework.", options: ["do", "did", "done", "doing"], answer: "done", explanation: "El Presente Perfecto (have/has) requiere el participio pasado del verbo (done)." },
+            { type: 'grammar', question: "He is ___ than his brother.", options: ["tall", "taller", "tallest", "more tall"], answer: "taller", explanation: "Para comparar dos cosas, se usa el adjetivo comparativo (taller)." },
+            { type: 'grammar', question: "If I ___ you, I would study more.", options: ["was", "am", "were", "be"], answer: "were", explanation: "En el segundo condicional (situaciones hipotéticas), se usa 'were' para todas las personas." },
+            { type: 'grammar', question: "There isn't ___ sugar left.", options: ["many", "much", "some", "a lot"], answer: "much", explanation: "'Much' se usa con sustantivos incontables (como sugar) en oraciones negativas." },
+            { type: 'grammar', question: "The book ___ by Mark Twain.", options: ["was written", "wrote", "is writing", "write"], answer: "was written", explanation: "La voz pasiva en pasado se forma con was/were + participio pasado (written)." },
+            { type: 'grammar', question: "I've been waiting ___ two hours.", options: ["since", "for", "at", "on"], answer: "for", explanation: "'For' se usa para indicar una duración de tiempo (two hours)." },
+            { type: 'grammar', question: "My keys are not on the table. I must ___ them at home.", options: ["leave", "have left", "left", "leaving"], answer: "have left", explanation: "Para una deducción sobre el pasado, se usa un verbo modal (must) + have + participio pasado." },
+            { type: 'grammar', question: "She asked me ___ I was doing.", options: ["what", "that", "if", "which"], answer: "what", explanation: "En el discurso indirecto (reported speech), 'what' se usa para reportar una pregunta sobre qué." },
+            { type: 'grammar', question: "By the time the police arrived, the thief ___.", options: ["escapes", "had escaped", "has escaped", "was escaping"], answer: "had escaped", explanation: "El Pasado Perfecto (had escaped) se usa para una acción que ocurrió antes que otra acción en el pasado." },
+            { type: 'grammar', question: "You ___ touch that, it's dangerous.", options: ["mustn't", "don't have to", "couldn't", "should"], answer: "mustn't", explanation: "'Mustn't' se usa para una prohibición fuerte." },
+            { type: 'grammar', question: "I wish I ___ speak French.", options: ["can", "can to", "could", "would"], answer: "could", explanation: "Después de 'wish' para expresar un deseo sobre una habilidad presente, se usa 'could'." },
+            { type: 'grammar', question: "This is the house ___ I grew up.", options: ["which", "that", "where", "who"], answer: "where", explanation: "'Where' se usa como pronombre relativo para referirse a un lugar." },
+            { type: 'grammar', question: "Neither of the answers ___ correct.", options: ["is", "are", "be", "were"], answer: "is", explanation: "Después de 'Neither of', el verbo generalmente va en singular." },
+            { type: 'grammar', question: "He is used to ___ up early.", options: ["get", "getting", "got", "gets"], answer: "getting", explanation: "La expresión 'be used to' va seguida de un gerundio (-ing)." },
+            { type: 'grammar', question: "The test was difficult, ___ I think I did well.", options: ["so", "but", "because", "although"], answer: "but", explanation: "'But' se usa para conectar dos ideas contrastantes." },
+            { type: 'grammar', question: "I'm looking forward ___ you again.", options: ["to see", "seeing", "to seeing", "see"], answer: "to seeing", explanation: "La expresión 'look forward to' va seguida de un gerundio (-ing)." },
+            { type: 'grammar', question: "She has lived here ___ 2010.", options: ["for", "since", "from", "at"], answer: "since", explanation: "'Since' se usa para indicar el punto de inicio de un período de tiempo." },
+            { type: 'grammar', question: "If it ___, we will cancel the picnic.", options: ["rain", "rains", "will rain", "rained"], answer: "rains", explanation: "En el primer condicional, la cláusula 'if' usa el presente simple." },
+            { type: 'grammar', question: "He ___ for the company for ten years before he retired.", options: ["works", "has worked", "had worked", "is working"], answer: "had worked" , explanation: "El Pasado Perfecto se usa para una acción que duró un tiempo antes de otra acción en el pasado."},
+            { type: 'grammar', question: "The problem was ___ difficult for me to solve.", options: ["so", "very", "too", "enough"], answer: "too" , explanation: "'Too' se usa antes de un adjetivo para indicar un exceso que impide algo."},
+            { type: 'grammar', question: "I'd rather you ___ that.", options: ["don't do", "didn't do", "not do", "won't do"], answer: "didn't do" , explanation: "La estructura 'would rather' + sujeto va seguida del Pasado Simple para expresar una preferencia."},
+            { type: 'grammar', question: "Not only ___ sing, but she also plays the piano.", options: ["can she", "she can", "she does", "does she"], answer: "can she" , explanation: "Cuando una oración empieza con 'Not only', se invierte el sujeto y el verbo auxiliar."},
+            { type: 'grammar', question: "The manager had the report ___ by his assistant.", options: ["write", "wrote", "written", "writing"], answer: "written" , explanation: "La estructura causativa 'have something done' usa el participio pasado."},
             // Proofreading (20 questions)
-            { type: 'proofreading', question: "Me and my friends went to the park.", options: ["Me", "friends", "went", "park"], answer: "Me" },
-            { type: 'proofreading', question: "There's to many people in this room.", options: ["There's", "to", "many", "room"], answer: "to" },
-            { type: 'proofreading', question: "The dog lost it's bone.", options: ["dog", "lost", "it's", "bone"], answer: "it's" },
-            { type: 'proofreading', question: "She is one of the best student in the class.", options: ["one", "best", "student", "class"], answer: "student" },
-            { type: 'proofreading', question: "I could of done that for you.", options: ["could of", "done", "that", "for you"], answer: "could of" },
-            { type: 'proofreading', question: "He did good on the test.", options: ["did", "good", "on", "test"], answer: "good" },
-            { type: 'proofreading', question: "Less people attended the event this year.", options: ["Less", "attended", "event", "year"], answer: "Less" },
-            { type: 'proofreading', question: "The effects of the storm was devastating.", options: ["effects", "storm", "was", "devastating"], answer: "was" },
-            { type: 'proofreading', question: "Her and I are going to the movies.", options: ["Her", "I", "are going", "movies"], answer: "Her" },
-            { type: 'proofreading', question: "I'm laying down for a nap.", options: ["I'm", "laying", "down", "nap"], answer: "laying" },
-            { type: 'proofreading', question: "Who's book is this on the table?", options: ["Who's", "book", "is this", "on the table"], answer: "Who's" },
-            { type: 'proofreading', question: "The data are clear and supports the conclusion.", options: ["data", "are", "supports", "conclusion"], answer: "supports" },
-            { type: 'proofreading', question: "I am very exciting about the trip.", options: ["am", "very", "exciting", "about"], answer: "exciting" },
-            { type: 'proofreading', question: "Between you and I, this is a secret.", options: ["Between", "you and I", "this is", "a secret"], answer: "you and I" },
-            { type: 'proofreading', question: "The amount of cars on the road is increasing.", options: ["amount", "cars", "on the road", "is"], answer: "amount" },
-            { type: 'proofreading', question: "Each of the boys get a prize.", options: ["Each", "boys", "get", "prize"], answer: "get" },
-            { type: 'proofreading', question: "I'm not sure if I can except your offer.", options: ["sure", "if", "except", "offer"], answer: "except" },
-            { type: 'proofreading', question: "The cat is sleeping on the couch, it looks tired.", options: ["cat", "is sleeping", "couch", "it"], answer: "it" },
-            { type: 'proofreading', question: "They're going to there house after school.", options: ["They're", "going", "there", "house"], answer: "there" },
-            { type: 'proofreading', question: "Your a very talented artist.", options: ["Your", "a", "very", "talented"], answer: "Your" },
+            { type: 'proofreading', question: "Me and my friends went to the park.", options: ["Me", "friends", "went", "park"], answer: "Me", explanation: "Cuando se es parte del sujeto, se usa 'I', no 'Me'. Lo correcto es 'My friends and I'." },
+            { type: 'proofreading', question: "There's to many people in this room.", options: ["There's", "to", "many", "room"], answer: "to", explanation: "'To' es una preposición. La palabra correcta para indicar exceso es 'too'." },
+            { type: 'proofreading', question: "The dog lost it's bone.", options: ["dog", "lost", "it's", "bone"], answer: "it's", explanation: "'It's' es la contracción de 'it is'. El posesivo es 'its' (sin apóstrofo)." },
+            { type: 'proofreading', question: "She is one of the best student in the class.", options: ["one", "best", "student", "class"], answer: "student", explanation: "La frase 'one of the' siempre va seguida de un sustantivo plural (students)." },
+            { type: 'proofreading', question: "I could of done that for you.", options: ["could of", "done", "that", "for you"], answer: "could of", explanation: "Esto es un error común. La forma correcta es 'could have'." },
+            { type: 'proofreading', question: "He did good on the test.", options: ["did", "good", "on", "test"], answer: "good", explanation: "'Good' es un adjetivo. Para modificar un verbo (did), se necesita un adverbio (well)." },
+            { type: 'proofreading', question: "Less people attended the event this year.", options: ["Less", "attended", "event", "year"], answer: "Less", explanation: "'Less' se usa para incontables. Para contables (people), se usa 'fewer'." },
+            { type: 'proofreading', question: "The effects of the storm was devastating.", options: ["effects", "storm", "was", "devastating"], answer: "was", explanation: "El sujeto es 'effects' (plural), por lo tanto, el verbo debe ser plural (were)." },
+            { type: 'proofreading', question: "Her and I are going to the movies.", options: ["Her", "I", "are going", "movies"], answer: "Her", explanation: "Cuando se es parte del sujeto, se usa el pronombre de sujeto (She), no el de objeto (Her). Sería 'She and I'." },
+            { type: 'proofreading', question: "I'm laying down for a nap.", options: ["I'm", "laying", "down", "nap"], answer: "laying", explanation: "'Lay' (poner algo) requiere un objeto. Para recostarse, el verbo correcto es 'lie'. La forma correcta es 'I'm lying down'." },
+            { type: 'proofreading', question: "Who's book is this on the table?", options: ["Who's", "book", "is this", "on the table"], answer: "Who's", explanation: "'Who's' es la contracción de 'who is'. El posesivo es 'whose'." },
+            { type: 'proofreading', question: "The data are clear and supports the conclusion.", options: ["data", "are", "supports", "conclusion"], answer: "supports", explanation: "El sujeto es 'data' (plural), por lo que el verbo debe ser plural (support)." },
+            { type: 'proofreading', question: "I am very exciting about the trip.", options: ["am", "very", "exciting", "about"], answer: "exciting", explanation: "Para describir un sentimiento, se usa el participio en -ed (excited). 'Exciting' describe algo que causa el sentimiento." },
+            { type: 'proofreading', question: "Between you and I, this is a secret.", options: ["Between", "you and I", "this is", "a secret"], answer: "you and I", explanation: "Después de una preposición como 'between', se usan pronombres de objeto (you and me)." },
+            { type: 'proofreading', question: "The amount of cars on the road is increasing.", options: ["amount", "cars", "on the road", "is"], answer: "amount", explanation: "'Amount' se usa para incontables. Para contables (cars), se usa 'number'." },
+            { type: 'proofreading', question: "Each of the boys get a prize.", options: ["Each", "boys", "get", "prize"], answer: "get", explanation: "Después de 'Each of', el verbo va en singular (gets)." },
+            { type: 'proofreading', question: "I'm not sure if I can except your offer.", options: ["sure", "if", "except", "offer"], answer: "except", explanation: "'Except' significa 'a excepción de'. El verbo correcto es 'accept' (aceptar)." },
+            { type: 'proofreading', question: "The cat is sleeping on the couch, it looks tired.", options: ["cat", "is sleeping", "couch", "it"], answer: "it", explanation: "Esto es un 'comma splice' (unir dos oraciones independientes con una coma). Debería ser un punto o punto y coma antes de 'it'." },
+            { type: 'proofreading', question: "They're going to there house after school.", options: ["They're", "going", "there", "house"], answer: "there", explanation: "'There' indica un lugar. El posesivo es 'their'." },
+            { type: 'proofreading', question: "Your a very talented artist.", options: ["Your", "a", "very", "talented"], answer: "Your", explanation: "'Your' es un posesivo. La forma correcta es 'You're' (contracción de you are)." },
             // Reading (3 long texts)
             { type: 'reading', text: "The phenomenon of urban heat islands (UHIs) is a significant environmental challenge facing cities worldwide. A UHI is a metropolitan area that is significantly warmer than its surrounding rural areas due to human activities. The main cause is the modification of land surfaces. Materials like concrete and asphalt, common in cities, absorb and retain more of the sun's heat than natural landscapes like forests and water bodies. This retained heat is then released, particularly at night, keeping the city warmer. Waste heat generated by energy usage is a secondary contributor. UHIs can have serious consequences, including increased energy consumption for cooling, elevated emissions of air pollutants and greenhouse gases, compromised human health and comfort, and impaired water quality. To mitigate these effects, cities are implementing strategies such as increasing tree and vegetative cover, installing green roofs, and using cool, reflective materials for pavements and roofs.", sub_questions: [ { question: "What is the primary cause of the urban heat island effect?", options: ["Air pollution from cars", "The modification of land surfaces with heat-absorbing materials", "Waste heat from industrial factories", "A lack of wind in cities"], answer: "The modification of land surfaces with heat-absorbing materials" }, { question: "Which of the following is NOT mentioned as a consequence of UHIs?", options: ["Higher energy bills for air conditioning", "Better water quality in rivers", "Increased air pollution", "Negative impacts on human health"], answer: "Better water quality in rivers" }, { question: "What is a 'cool roof' designed to do?", options: ["Absorb more heat", "Reflect more sunlight", "Generate electricity", "Store rainwater"], answer: "Reflect more sunlight" } ] },
             { type: 'reading', text: "The history of cryptography, the practice of secure communication, is as old as writing itself. Ancient civilizations used simple methods to conceal messages. The Spartans, for example, used a scytale, a cylinder with a strip of parchment wound around it, to create a transposition cipher. Julius Caesar used a simple substitution cipher, shifting each letter by a set number of places in the alphabet. For centuries, these methods were sufficient. However, the advent of frequency analysis in the 9th century by Arab scholar Al-Kindi rendered most simple substitution ciphers insecure. This led to the development of more complex polyalphabetic ciphers, like the Vigenère cipher, which were considered unbreakable for centuries. The real revolution came in the 20th century with the invention of mechanical and electronic devices, such as the Enigma machine used by Germany in World War II. The successful breaking of Enigma by Allied cryptanalysts, including Alan Turing, was a pivotal moment in the war and the history of computing. Today, cryptography is based on complex mathematical principles and is essential for securing everything from e-commerce to national security.", sub_questions: [ { question: "What was the main weakness of simple substitution ciphers like Caesar's?", options: ["They were too difficult to use", "They were vulnerable to frequency analysis", "They required a special machine", "They could only be used for short messages"], answer: "They were vulnerable to frequency analysis" }, { question: "What was the Enigma machine?", options: ["A type of polyalphabetic cipher", "A tool for frequency analysis", "An ancient Greek cryptographic device", "A mechanical and electronic cipher machine"], answer: "A mechanical and electronic cipher machine" }, { question: "What is modern cryptography primarily based on?", options: ["Letter substitution", "Mechanical devices", "Complex mathematical principles", "Transposition of letters"], answer: "Complex mathematical principles" } ] },
@@ -244,10 +244,26 @@
         function finishTest() { clearInterval(timerInterval); finalResults = calculateResults(); showResults(finalResults); saveResultsToFirestore(finalResults); }
         function calculateResults() {
             let score = 0, scorableQuestions = 0;
+            let sectionScores = { grammar: 0, proofreading: 0, reading: 0, listening: 0 };
+            let sectionTotals = { grammar: 0, proofreading: 0, reading: 0, listening: 0 };
+            
             questions.forEach((q, index) => {
-                if (q.type === 'grammar' || q.type === 'proofreading') { scorableQuestions++; if (userAnswers[index] === q.answer) score++; }
-                else if ((q.type === 'reading' || q.type === 'listening') && q.sub_questions) {
-                    q.sub_questions.forEach((sub_q, sub_index) => { scorableQuestions++; if (userAnswers[index] && userAnswers[index][sub_index] === sub_q.answer) score++; });
+                if (q.type === 'grammar' || q.type === 'proofreading') {
+                    scorableQuestions++;
+                    sectionTotals[q.type]++;
+                    if (userAnswers[index] === q.answer) {
+                        score++;
+                        sectionScores[q.type]++;
+                    }
+                } else if ((q.type === 'reading' || q.type === 'listening') && q.sub_questions) {
+                    q.sub_questions.forEach((sub_q, sub_index) => {
+                        scorableQuestions++;
+                        sectionTotals[q.type]++;
+                        if (userAnswers[index] && userAnswers[index][sub_index] === sub_q.answer) {
+                            score++;
+                            sectionScores[q.type]++;
+                        }
+                    });
                 }
             });
             const percentage = scorableQuestions > 0 ? (score / scorableQuestions) * 100 : 0;
@@ -255,7 +271,7 @@
             if (percentage > 85) { level = 'B2'; description = 'Nivel Independiente Avanzado.'; } 
             else if (percentage > 65) { level = 'B1'; description = 'Nivel Independiente.'; } 
             else if (percentage > 40) { level = 'A2'; description = 'Nivel Básico Avanzado.'; }
-            return { score, total: scorableQuestions, level, description };
+            return { score, total: scorableQuestions, level, description, sectionScores, sectionTotals };
         }
         function showResults(results) {
             testScreen.style.display = 'none';
@@ -306,7 +322,7 @@
                 if (q.type === 'grammar' || q.type === 'proofreading') {
                     const isCorrect = userAnswer === q.answer;
                     reviewHtml += `<p>Tu respuesta: <span class="font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userAnswer || 'No contestada'}</span></p>`;
-                    if (!isCorrect) { reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${q.answer}</span></p>`; }
+                    if (!isCorrect) { reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${q.answer}</span></p><p class="text-sm text-gray-500 mt-1"><em>Explicación: ${q.explanation}</em></p>`; }
                 } else if (q.type === 'reading' || q.type === 'listening') {
                     reviewHtml += `<div class="pl-4 mt-2 space-y-2">`;
                     q.sub_questions.forEach((sub_q, sub_index) => {
@@ -359,4 +375,3 @@
     </script>
 </body>
 </html>
-
