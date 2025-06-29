@@ -8,8 +8,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- jsPDF para generar PDFs (si se implementa en el futuro) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Chart.js para la gráfica de resultados -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,12 +76,23 @@
                 <h2 class="text-4xl md:text-5xl font-black hw-red mb-4">HENRY WALLON TEAM</h2>
                 <p class="text-xl md:text-2xl font-bold text-gray-700 mb-6">- Somos cuna de campeones -</p>
                 <img src="https://ihw.edu.mx/wp-content/uploads/2024/09/bufalo_mascota_ihw.png" alt="Mascota Búfalo IHW" class="mx-auto mb-8 h-48 w-48 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x200/FFFFFF/000000?text=Mascota+IHW';">
+                
+                <!-- Resultados Generales -->
                 <div class="bg-gray-100 p-6 rounded-lg">
                     <h3 class="text-lg font-semibold text-gray-600">Resultado del Placement Test</h3>
                     <p id="final-score" class="text-2xl font-bold text-gray-800 mt-2"></p>
                     <p id="final-level" class="text-5xl font-extrabold hw-blue-text mt-1"></p>
                     <p id="level-description" class="text-gray-600 mt-4"></p>
                 </div>
+
+                <!-- Reporte por Sección con Gráfica -->
+                <div class="bg-gray-100 p-6 rounded-lg mt-8">
+                    <h3 class="text-lg font-semibold text-gray-600 mb-4">Reporte de Desempeño por Sección</h3>
+                    <div class="max-w-md mx-auto">
+                        <canvas id="resultsChart"></canvas>
+                    </div>
+                </div>
+
                 <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button id="review-answers-btn" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg">Revisar Respuestas</button>
                     <a id="whatsapp-share-btn" href="#" target="_blank" class="w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg text-lg inline-flex items-center justify-center">
@@ -90,8 +101,9 @@
                     </a>
                 </div>
                 <div class="mt-8">
-                    <a href="#" class="w-full md:w-auto inline-block bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-500 transition-colors">
-                        ¿Necesitas Ayuda? ¡Contáctanos!
+                    <!-- CHANGE 1: Modified button text and link -->
+                    <a href="clases.html" class="w-full md:w-auto inline-block bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-500 transition-colors">
+                        Necesitas Clases Personalizadas Online
                     </a>
                 </div>
                 <div class="mt-8 text-xs text-gray-500"><p>Creado por Tchr V. Barrientos</p></div>
@@ -104,6 +116,8 @@
                 <button id="back-to-results-btn" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg">Volver</button>
             </div>
             <div id="review-container" class="space-y-6"></div>
+            <!-- CHANGE 3: Added a second "Back" button at the bottom -->
+            <button id="back-to-results-btn-bottom" class="mt-8 w-full bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg">Volver a Resultados</button>
         </div>
     </div>
 
@@ -112,16 +126,12 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         
-        const { jsPDF } = window.jspdf;
-
         // --- Firebase Configuration ---
-        // WARNING: Exposing API keys on the client side is a security risk.
-        // Ensure you have set up Firestore Security Rules to protect your data.
         const firebaseConfig = {
             apiKey: "AIzaSyBSTOZF4Zkrs8gLg7Y6LY4PNnS3bOh9jpY",
             authDomain: "henrywallontestapp.firebaseapp.com",
             projectId: "henrywallontestapp",
-            storageBucket: "henrywallontestapp.appspot.com", // Corrected domain
+            storageBucket: "henrywallontestapp.appspot.com",
             messagingSenderId: "979261512738",
             appId: "1:979261512738:web:cfd47ca78250e97964be7b",
             measurementId: "G-6KSP4CESZ6"
@@ -193,8 +203,6 @@
         ];
 
         // --- Main Application Logic ---
-        // FIX: All code is now inside window.onload to ensure the DOM is ready 
-        // and to correctly manage variable scope.
         window.onload = () => {
             // --- DOM Element Selection ---
             const startBtn = document.getElementById('start-btn');
@@ -202,6 +210,7 @@
             const prevBtn = document.getElementById('prev-btn');
             const reviewAnswersBtn = document.getElementById('review-answers-btn');
             const backToResultsBtn = document.getElementById('back-to-results-btn');
+            const backToResultsBtnBottom = document.getElementById('back-to-results-btn-bottom');
             const modalCloseBtn = document.getElementById('modal-close-btn');
             const startScreen = document.getElementById('start-screen');
             const testScreen = document.getElementById('test-screen');
@@ -217,6 +226,7 @@
             const sectionModal = document.getElementById('section-modal');
             const modalTitle = document.getElementById('modal-title');
             const modalInstruction = document.getElementById('modal-instruction');
+            const resultsChartCanvas = document.getElementById('resultsChart');
 
             // --- State Variables ---
             let currentQuestionIndex = 0;
@@ -227,6 +237,7 @@
             let finalResults = {};
             let lastShownSection = null;
             let player;
+            let resultsChart = null;
 
             // --- Functions ---
             function renderQuestion(index) {
@@ -284,7 +295,6 @@
             function loadYouTubePlayer(videoId) {
                 if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
                     var tag = document.createElement('script');
-                    // FIX: Corrected YouTube API URL
                     tag.src = "https://www.youtube.com/iframe_api";
                     var firstScriptTag = document.getElementsByTagName('script')[0];
                     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
@@ -304,7 +314,6 @@
                 });
             }
 
-            // FIX: Attach functions to window object so inline 'onclick' attributes can access them.
             window.selectAnswer = (qIndex, answer) => {
                 userAnswers[qIndex] = answer;
                 renderQuestion(qIndex);
@@ -424,6 +433,9 @@
                 document.getElementById('final-level').textContent = results.level;
                 document.getElementById('level-description').textContent = results.description;
                 
+                // CHANGE 2: Render the results chart
+                renderResultsChart(results);
+
                 const writingQuestionObject = questions.find(q => q.type === 'writing');
                 const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta.";
                 
@@ -439,9 +451,72 @@
                 
                 const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
                 whatsappShareBtn.href = whatsappLink;
+            }
 
-                // REMOVED: The mailto: iframe method is unreliable and often blocked.
-                // The primary data collection method is Firestore.
+            // CHANGE 2: New function to render the results chart
+            function renderResultsChart(results) {
+                if (resultsChart) {
+                    resultsChart.destroy();
+                }
+                const ctx = resultsChartCanvas.getContext('2d');
+                const labels = ['Gramática', 'Corrección', 'Lectura', 'Auditiva'];
+                const data = [
+                    (results.sectionScores.grammar / results.sectionTotals.grammar) * 100,
+                    (results.sectionScores.proofreading / results.sectionTotals.proofreading) * 100,
+                    (results.sectionScores.reading / results.sectionTotals.reading) * 100,
+                    (results.sectionScores.listening / results.sectionTotals.listening) * 100,
+                ];
+                const sanitizedData = data.map(d => isNaN(d) ? 0 : d.toFixed(2));
+
+                resultsChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Puntuación por Sección (%)',
+                            data: sanitizedData,
+                            backgroundColor: 'rgba(0, 51, 102, 0.2)',
+                            borderColor: 'rgba(0, 51, 102, 1)',
+                            pointBackgroundColor: 'rgba(0, 51, 102, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(0, 51, 102, 1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                pointLabels: {
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    },
+                                    color: '#333'
+                                },
+                                ticks: {
+                                    backdropColor: 'transparent',
+                                    color: '#666',
+                                    stepSize: 20
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 100
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
             }
 
             async function saveResultsToFirestore(results) {
@@ -457,7 +532,7 @@
                         totalQuestions: results.total,
                         level: results.level,
                         writingAnswer: writingAnswer,
-                        userAnswers: userAnswers // Opcional: guardar todas las respuestas
+                        userAnswers: userAnswers
                     });
                     console.log("Results saved to Firestore successfully.");
                 } catch (e) {
@@ -519,6 +594,17 @@
                     reviewContainer.innerHTML += reviewHtml;
                 });
             }
+            
+            function showReviewScreen() {
+                resultsScreen.style.display = 'none';
+                reviewScreen.style.display = 'block';
+                renderReview();
+            }
+
+            function showResultsScreen() {
+                reviewScreen.style.display = 'none';
+                resultsScreen.style.display = 'block';
+            }
 
             // --- Event Listeners ---
             startBtn.addEventListener('click', startTest);
@@ -536,15 +622,9 @@
                     renderQuestion(currentQuestionIndex);
                 }
             });
-            reviewAnswersBtn.addEventListener('click', () => {
-                resultsScreen.style.display = 'none';
-                reviewScreen.style.display = 'block';
-                renderReview();
-            });
-            backToResultsBtn.addEventListener('click', () => {
-                reviewScreen.style.display = 'none';
-                resultsScreen.style.display = 'block';
-            });
+            reviewAnswersBtn.addEventListener('click', showReviewScreen);
+            backToResultsBtn.addEventListener('click', showResultsScreen);
+            backToResultsBtnBottom.addEventListener('click', showResultsScreen);
             modalCloseBtn.addEventListener('click', () => {
                 sectionModal.style.display = 'none';
             });
@@ -557,6 +637,3 @@
     </script>
 </body>
 </html>
-
-
-
