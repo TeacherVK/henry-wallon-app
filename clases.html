@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clases de Inglés en Línea - Henry Wallon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hw-blue-bg { background-color: #003366; }
+        .hw-blue-text { color: #003366; }
+        .hw-yellow-bg { background-color: #FFD700; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl">
+            
+            <div class="text-center">
+                <img src="https://ihw.edu.mx/wp-content/uploads/2024/08/logo-henrywallon-white.png" alt="Logo Henry Wallon" class="mx-auto mb-6 h-24 hw-blue-bg p-4 rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x100/003366/FFFFFF?text=Henry+Wallon+Logo';">
+                <h1 class="text-3xl md:text-5xl font-extrabold hw-blue-text">¿Listo para Llevar tu Inglés al Siguiente Nivel?</h1>
+                <p class="text-xl text-gray-600 mt-4">Tu resultado en el examen es solo el punto de partida. Si necesitas más ayuda con tu nivel de inglés, ¡entonces esta oferta es para ti!</p>
+            </div>
+
+            <div class="mt-10 grid md:grid-cols-2 gap-8 items-center">
+                <div class="prose max-w-none">
+                    <h2 class="text-2xl font-bold hw-blue-text">Más que Clases, una Transformación</h2>
+                    <p>Olvídate de las clases aburridas. Nuestro método se enfoca en la comunicación real para que puedas:</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Hablar con confianza</strong> en situaciones cotidianas y profesionales.</li>
+                        <li><strong>Entender a hablantes nativos</strong> sin esfuerzo, ya sea en películas o en una junta de trabajo.</li>
+                        <li><strong>Escribir correos y mensajes</strong> de forma clara y profesional.</li>
+                        <li><strong>Abrir las puertas</strong> a mejores oportunidades laborales y académicas.</li>
+                    </ul>
+                    <h3 class="text-xl font-bold hw-blue-text mt-6">Una Inversión Inteligente en tu Futuro</h3>
+                    <p>Por solo **$900 MXN mensuales**, obtienes 12 horas de clase al mes (3 horas a la semana) con un profesor experto. ¡Eso es menos de $75 por hora! Mucho menos de lo que gastas en cafés o salidas. Es una inversión que se paga sola.</p>
+                </div>
+                
+                <!-- Formulario de Inscripción -->
+                <div id="form-container" class="bg-gray-50 p-8 rounded-xl shadow-inner">
+                    <h3 class="text-2xl font-bold text-center hw-blue-text mb-4">¡Asegura tu Lugar!</h3>
+                    <p class="text-center text-gray-600 mb-6">Los grupos son pequeños. Déjanos tus datos y te contactaremos para finalizar tu inscripción.</p>
+                    <form id="clases-form" class="space-y-4">
+                        <div>
+                            <label for="leadName" class="block text-sm font-medium text-gray-700">Nombre Completo:</label>
+                            <input type="text" id="leadName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="leadEmail" class="block text-sm font-medium text-gray-700">Correo Electrónico:</label>
+                            <input type="email" id="leadEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label for="leadPhone" class="block text-sm font-medium text-gray-700">Teléfono:</label>
+                            <input type="tel" id="leadPhone" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Horario de Interés:</label>
+                            <select id="leadSchedule" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                                <option>Lunes a Viernes (5:00 PM - 6:00 PM)</option>
+                                <option>Sábados (12:00 PM - 3:00 PM)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-500 transition-all shadow-lg">
+                            ¡Quiero Inscribirme Ahora!
+                        </button>
+                    </form>
+                </div>
+                <div id="success-message" class="hidden bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md" role="alert">
+                    <p class="font-bold">¡Gracias por tu interés!</p>
+                    <p>Hemos recibido tus datos. Nos pondremos en contacto contigo muy pronto para darte los siguientes pasos.</p>
+                </div>
+
+            </div>
+            <div class="text-center mt-8">
+                 <a href="index.html" class="text-sm text-gray-500 hover:underline">Volver al examen</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+        // --- CONFIGURACIÓN DE FIREBASE ---
+        // IMPORTANTE: Usa la MISMA configuración que en tu archivo index.html
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSTOZF4Zkrs8gLg7Y6LY4PNnS3bOh9jpY",
+            authDomain: "henrywallontestapp.firebaseapp.com",
+            projectId: "henrywallontestapp",
+            storageBucket: "henrywallontestapp.firebasestorage.app",
+            messagingSenderId: "979261512738",
+            appId: "1:979261512738:web:cfd47ca78250e97964be7b",
+            measurementId: "G-6KSP4CESZ6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const clasesForm = document.getElementById('clases-form');
+        const formContainer = document.getElementById('form-container');
+        const successMessage = document.getElementById('success-message');
+
+        clasesForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const leadData = {
+                name: document.getElementById('leadName').value,
+                email: document.getElementById('leadEmail').value,
+                phone: document.getElementById('leadPhone').value,
+                schedule: document.getElementById('leadSchedule').value,
+                registeredAt: new Date()
+            };
+
+            try {
+                // Guardar los datos en una nueva colección "class_inquiries"
+                const docRef = await addDoc(collection(db, "class_inquiries"), leadData);
+                console.log("Inquiry saved with ID: ", docRef.id);
+                
+                // Mostrar mensaje de éxito
+                formContainer.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error saving inquiry: ", error);
+                alert("Hubo un error al enviar tu información. Por favor, intenta de nuevo.");
+            }
+        });
+    </script>
+</body>
+</html>
