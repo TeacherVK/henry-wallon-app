@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henry Wallon Placement Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hw-blue-bg { background-color: #003366; } .hw-blue-text { color: #003366; } .hw-red { color: #D72828; } .hw-yellow { background-color: #FFD700; }
+        #test-screen, #results-screen, #dev-toggle-button, #loading-overlay { display: none; }
+        .option-btn { transition: all 0.2s ease-in-out; border: 2px solid transparent; } .option-btn:hover { transform: translateY(-2px); border-color: #003366; }
+        .option-btn.selected { background-color: #003366; color: white; border-color: #003366; }
+        #timer { animation: pulse 2s infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body class="hw-blue-bg text-gray-800 antialiased">
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-50">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
+        <p class="text-white text-xl mt-4">Generando tu examen personalizado...</p>
+    </div>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <div id="start-screen">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
+                <img src="https://ihw.edu.mx/wp-content/uploads/2024/08/logo-henrywallon-white.png" alt="Logo Henry Wallon" class="mx-auto mb-6 h-24 hw-blue-bg p-4 rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x100/003366/FFFFFF?text=Henry+Wallon+Logo';">
+                <h1 class="text-3xl md:text-4xl font-extrabold hw-blue-text mb-4">Placement Test</h1>
+                <p class="text-gray-600 mb-8">Evaluación de Nivel de Inglés (CEFR)</p>
+                <form id="user-info-form" class="text-left space-y-4">
+                    <div><label for="fullName" class="block text-sm font-medium text-gray-700">Nombre Completo:</label><input type="text" id="fullName" name="fullName" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div>
+                    <div><label for="section" class="block text-sm font-medium text-gray-700">Sección/Grupo:</label><input type="text" id="section" name="section" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div>
+                    <div><label for="school" class="block text-sm font-medium text-gray-700">Escuela:</label><input type="text" id="school" name="school" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div>
+                    <div><label class="block text-sm font-medium text-gray-700">Hora de Examen:</label><p id="examTime" class="mt-1 text-lg font-semibold hw-blue-text"></p></div>
+                </form>
+                <div class="mt-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg">
+                    <h3 class="font-bold">Instrucciones Importantes</h3>
+                    <ul class="list-disc list-inside mt-2 text-sm"><li>No cierres esta página.</li><li>No uses IA en el examen.</li><li>Solo puedes responder una vez.</li></ul>
+                </div>
+                <button id="start-btn" class="mt-8 w-full hw-blue-bg text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-opacity-90 transition-all duration-300 shadow-lg">Comenzar Examen</button>
+            </div>
+        </div>
+        <div id="test-screen">
+            <header class="bg-white p-4 rounded-2xl shadow-lg mb-6 sticky top-4 z-10">
+                <div class="flex justify-between items-center"><h2 class="text-xl font-bold hw-blue-text">Henry Wallon Test</h2><div id="timer" class="text-2xl font-extrabold text-white bg-red-600 px-4 py-2 rounded-lg shadow-md">45:00</div></div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progress-bar" class="bg-hw-yellow h-2.5 rounded-full" style="width: 0%"></div></div>
+            </header>
+            <div id="question-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl min-h-[300px]"></div>
+            <div class="mt-6 flex justify-between"><button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-colors">Anterior</button><button id="next-btn" class="hw-blue-bg text-white font-bold py-2 px-8 rounded-lg hover:bg-opacity-90 transition-colors">Siguiente</button></div>
+        </div>
+        <div id="results-screen">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
+                <h2 class="text-4xl md:text-5xl font-black hw-red mb-4">HENRY WALLON TEAM</h2>
+                <p class="text-xl md:text-2xl font-bold text-gray-700 mb-6">- Somos cuna de campeones -</p>
+                <img src="https://ihw.edu.mx/wp-content/uploads/2024/09/bufalo_mascota_ihw.png" alt="Mascota Búfalo IHW" class="mx-auto mb-8 h-48 w-48 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x200/FFFFFF/000000?text=Mascota+IHW';">
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-600">Resultado del Placement Test</h3>
+                    <p id="final-score" class="text-2xl font-bold text-gray-800 mt-2"></p>
+                    <p id="final-level" class="text-5xl font-extrabold hw-blue-text mt-1"></p>
+                    <p id="level-description" class="text-gray-600 mt-4"></p>
+                </div>
+                <div class="mt-8"><p class="mb-4 font-semibold text-gray-700">Tus resultados han sido guardados. ¡Gracias por completar el examen!</p></div>
+                <div class="mt-8 text-xs text-gray-500"><p>Creado por Tchr V. Barrientos</p><button id="dev-toggle-button-results" class="text-blue-500 underline">Modo Desarrollador</button></div>
+            </div>
+        </div>
+        <button id="dev-toggle-button" class="fixed bottom-4 right-4 bg-yellow-400 text-black p-2 rounded-full shadow-lg">Dev: Reset</button>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js";
+        const firebaseConfig = { apiKey: "TU_API_KEY", authDomain: "TU_AUTH_DOMAIN", projectId: "TU_PROJECT_ID", storageBucket: "TU_STORAGE_BUCKET", messagingSenderId: "TU_MESSAGING_SENDER_ID", appId: "TU_APP_ID" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const testDurationMinutes = 45;
+        let questions = [];
+        const startScreen = document.getElementById('start-screen'), testScreen = document.getElementById('test-screen'), resultsScreen = document.getElementById('results-screen'), startBtn = document.getElementById('start-btn'), userInfoForm = document.getElementById('user-info-form'), examTimeEl = document.getElementById('examTime'), timerEl = document.getElementById('timer'), questionContainer = document.getElementById('question-container'), progressBar = document.getElementById('progress-bar'), nextBtn = document.getElementById('next-btn'), prevBtn = document.getElementById('prev-btn'), devToggleBtn = document.getElementById('dev-toggle-button'), devToggleBtnResults = document.getElementById('dev-toggle-button-results'), loadingOverlay = document.getElementById('loading-overlay');
+        let currentQuestionIndex = 0, userAnswers = [], timerInterval, testStartTime, userData = {};
+        async function generateExamQuestions() {
+            loadingOverlay.style.display = 'flex';
+            try {
+                const response = await fetch('/api/generate-exam');
+                if (!response.ok) throw new Error(`Server function error: ${response.statusText}`);
+                const generatedJson = await response.json();
+                const validatedQuestions = [];
+                if (generatedJson.grammar && Array.isArray(generatedJson.grammar)) { generatedJson.grammar.forEach(q => { if (q.question && q.options && Array.isArray(q.options) && q.answer) validatedQuestions.push({ ...q, type: 'grammar' }); }); }
+                if (generatedJson.proofreading && Array.isArray(generatedJson.proofreading)) { generatedJson.proofreading.forEach(q => { if (q.question && q.options && Array.isArray(q.options) && q.answer) validatedQuestions.push({ ...q, type: 'proofreading' }); }); }
+                if (generatedJson.reading && Array.isArray(generatedJson.reading)) { generatedJson.reading.forEach(q => { if (q.text && q.sub_questions && Array.isArray(q.sub_questions)) validatedQuestions.push({ ...q, type: 'reading' }); }); }
+                if (generatedJson.listening && generatedJson.listening.text && generatedJson.listening.sub_questions && Array.isArray(generatedJson.listening.sub_questions)) { validatedQuestions.push({ ...generatedJson.listening, type: 'listening' }); }
+                if (generatedJson.writing && generatedJson.writing.question) { validatedQuestions.push({ ...generatedJson.writing, type: 'writing' }); }
+                if (validatedQuestions.length < 20) throw new Error("The generated exam is incomplete. Please try again.");
+                questions = validatedQuestions;
+                userAnswers = new Array(questions.length).fill(null);
+                return true;
+            } catch (error) {
+                console.error("Error generating questions:", error);
+                alert("Hubo un error al generar el examen. Por favor, intenta de nuevo.");
+                return false;
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+        function renderQuestion(index) {
+            const q = questions[index];
+            let html = '';
+            const questionNumber = index + 1;
+            const totalQuestions = questions.length;
+            html += `<div class="mb-4"><p class="text-sm font-semibold text-gray-500">Pregunta ${questionNumber} de ${totalQuestions}</p></div>`;
+            if (q.type === 'grammar' || q.type === 'proofreading') {
+                const instruction = q.type === 'proofreading' ? '<p class="text-sm text-red-600 mb-2">Instrucción: Elige la palabra o frase incorrecta.</p>' : '';
+                html += `<h3 class="text-xl md:text-2xl font-semibold mb-6">${q.question}</h3>${instruction}<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                q.options.forEach(option => {
+                    const isSelected = userAnswers[index] === option ? 'selected' : '';
+                    html += `<button class="option-btn p-4 border rounded-lg text-left ${isSelected}" onclick="selectAnswer(${index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                });
+                html += `</div>`;
+            } else if (q.type === 'reading' || q.type === 'listening') {
+                const instruction = q.type === 'listening' ? '<strong>Listening Comprehension:</strong><br>Lee el siguiente texto y responde.' : '<strong>Reading Comprehension:</strong><br>Lee el texto y responde.';
+                html += `<div class="prose max-w-none mb-6">${instruction}<br><br>${q.text}</div>`;
+                if (q.sub_questions && Array.isArray(q.sub_questions)) {
+                    q.sub_questions.forEach((sub_q, sub_index) => {
+                        html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
+                        sub_q.options.forEach(option => {
+                            const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
+                            html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                }
+            } else if (q.type === 'writing') {
+                const currentAnswer = userAnswers[index] || '';
+                html += `<h3 class="text-xl md:text-2xl font-semibold mb-4">${q.question}</h3><textarea id="writing-answer" class="w-full h-48 p-3 border rounded-lg" oninput="saveWritingAnswer(${index})">${currentAnswer}</textarea>`;
+            }
+            questionContainer.innerHTML = html;
+            updateNavigation();
+            updateProgressBar();
+        }
+        window.selectAnswer = (qIndex, answer) => { userAnswers[qIndex] = answer; renderQuestion(qIndex); }
+        window.selectSubAnswer = (qIndex, subQIndex, answer) => { if (!userAnswers[qIndex]) userAnswers[qIndex] = []; userAnswers[qIndex][subQIndex] = answer; renderQuestion(qIndex); }
+        window.saveWritingAnswer = (qIndex) => { userAnswers[qIndex] = document.getElementById('writing-answer').value; }
+        function updateNavigation() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+            nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? 'Finalizar Examen' : 'Siguiente';
+            nextBtn.classList.toggle('bg-green-600', currentQuestionIndex === questions.length - 1);
+            nextBtn.classList.toggle('hover:bg-green-700', currentQuestionIndex === questions.length - 1);
+            nextBtn.classList.toggle('hw-blue-bg', currentQuestionIndex !== questions.length - 1);
+        }
+        function updateProgressBar() { progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`; }
+        nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
+        prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
+        function startTimer() { let timeLeft = testDurationMinutes * 60; timerInterval = setInterval(() => { timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { clearInterval(timerInterval); alert('¡Tiempo terminado!'); finishTest(); } }, 1000); }
+        async function startTest() {
+            if (!userInfoForm.checkValidity()) { userInfoForm.reportValidity(); return; }
+            const questionsGenerated = await generateExamQuestions();
+            if (!questionsGenerated) return;
+            userData = { fullName: document.getElementById('fullName').value, section: document.getElementById('section').value, school: document.getElementById('school').value, examTime: testStartTime.toLocaleString('es-MX') };
+            localStorage.setItem('henryWallonTestTaken', 'true');
+            startScreen.style.display = 'none';
+            testScreen.style.display = 'block';
+            devToggleBtn.style.display = 'none';
+            renderQuestion(currentQuestionIndex);
+            startTimer();
+        }
+        function finishTest() {
+            clearInterval(timerInterval);
+            const results = calculateResults();
+            showResults(results);
+            saveResultsToFirestore(results);
+        }
+        function calculateResults() {
+            let score = 0, scorableQuestions = 0;
+            questions.forEach((q, index) => {
+                if (q.type === 'grammar' || q.type === 'proofreading') { scorableQuestions++; if (userAnswers[index] === q.answer) score++; }
+                else if ((q.type === 'reading' || q.type === 'listening') && q.sub_questions) {
+                    q.sub_questions.forEach((sub_q, sub_index) => { scorableQuestions++; if (userAnswers[index] && userAnswers[index][sub_index] === sub_q.answer) score++; });
+                }
+            });
+            const percentage = scorableQuestions > 0 ? (score / scorableQuestions) * 100 : 0;
+            let level = 'A1', description = 'Nivel Básico.';
+            if (percentage > 85) { level = 'B2'; description = 'Nivel Independiente Avanzado.'; } 
+            else if (percentage > 65) { level = 'B1'; description = 'Nivel Independiente.'; } 
+            else if (percentage > 40) { level = 'A2'; description = 'Nivel Básico Avanzado.'; }
+            return { score, total: scorableQuestions, level, description };
+        }
+        function showResults(results) {
+            testScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+            devToggleBtnResults.style.display = 'block';
+            document.getElementById('final-score').textContent = `Puntuación: ${results.score} de ${results.total}`;
+            document.getElementById('final-level').textContent = results.level;
+            document.getElementById('level-description').textContent = results.description;
+        }
+        async function saveResultsToFirestore(results) {
+            const writingQuestionObject = questions.find(q => q.type === 'writing');
+            const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta.";
+            try {
+                await addDoc(collection(db, "results"), {
+                    fullName: userData.fullName, section: userData.section, school: userData.school,
+                    examDate: new Date(), score: results.score, totalQuestions: results.total,
+                    level: results.level, writingAnswer: writingAnswer
+                });
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
+        }
+        function checkTestStatus() { if (localStorage.getItem('henryWallonTestTaken')) { startBtn.textContent = 'Ya has realizado este examen'; startBtn.disabled = true; startBtn.classList.add('opacity-50'); devToggleBtn.style.display = 'block'; } }
+        function resetTestState() { if (confirm('¿Estás seguro?')) { localStorage.removeItem('henryWallonTestTaken'); location.reload(); } }
+        devToggleBtn.addEventListener('click', resetTestState);
+        devToggleBtnResults.addEventListener('click', resetTestState);
+        window.onload = () => {
+            checkTestStatus();
+            testStartTime = new Date();
+            examTimeEl.textContent = testStartTime.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
+            startBtn.addEventListener('click', startTest);
+        };
+    </script>
+</body>
+</html>

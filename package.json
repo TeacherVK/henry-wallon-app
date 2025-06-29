@@ -1,0 +1,12 @@
+{
+  "name": "henry-wallon-test-serverless",
+  "version": "1.0.0",
+  "description": "Serverless function for Henry Wallon Test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1"
+  }
+}
