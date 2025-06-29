@@ -311,4 +311,328 @@
         window.onload = () => { checkTestStatus(); testStartTime = new Date(); examTimeEl.textContent = testStartTime.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' }); startBtn.addEventListener('click', startTest); };
     </script>
 </body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henry Wallon Placement Test</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jsPDF para generar PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hw-blue-bg { background-color: #003366; } .hw-blue-text { color: #003366; } .hw-red { color: #D72828; } .hw-yellow { background-color: #FFD700; }
+        #test-screen, #results-screen, #dev-toggle-button, #review-screen { display: none; }
+        .option-btn { transition: all 0.2s ease-in-out; border: 2px solid transparent; } .option-btn:hover { transform: translateY(-2px); border-color: #003366; }
+        .option-btn.selected { background-color: #003366; color: white; border-color: #003366; }
+        #timer { animation: pulse 2s infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    </style>
+</head>
+<body class="hw-blue-bg text-gray-800 antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <!-- 1. Pantalla de Inicio -->
+        <div id="start-screen">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
+                <img src="https://ihw.edu.mx/wp-content/uploads/2024/08/logo-henrywallon-white.png" alt="Logo Henry Wallon" class="mx-auto mb-6 h-24 hw-blue-bg p-4 rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x100/003366/FFFFFF?text=Henry+Wallon+Logo';">
+                <h1 class="text-3xl md:text-4xl font-extrabold hw-blue-text mb-4">Placement Test</h1>
+                <p class="text-gray-600 mb-8">Evaluación de Nivel de Inglés (CEFR)</p>
+                <form id="user-info-form" class="text-left space-y-4">
+                    <div><label for="fullName" class="block text-sm font-medium text-gray-700">Nombre Completo:</label><input type="text" id="fullName" name="fullName" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div>
+                    <div><label for="section" class="block text-sm font-medium text-gray-700">Sección/Grupo:</label><input type="text" id="section" name="section" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div>
+                    <div><label for="school" class="block text-sm font-medium text-gray-700">Escuela:</label><input type="text" id="school" name="school" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div>
+                    <div><label class="block text-sm font-medium text-gray-700">Hora de Examen:</label><p id="examTime" class="mt-1 text-lg font-semibold hw-blue-text"></p></div>
+                </form>
+                <div class="mt-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg">
+                    <h3 class="font-bold">Instrucciones Importantes</h3>
+                    <ul class="list-disc list-inside mt-2 text-sm"><li>No cierres esta página.</li><li>Solo puedes responder una vez.</li></ul>
+                </div>
+                <button id="start-btn" class="mt-8 w-full hw-blue-bg text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-opacity-90 transition-all duration-300 shadow-lg">Comenzar Examen</button>
+                
+                <!-- Nueva Sección para Compartir -->
+                <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col md:flex-row items-center justify-center gap-6">
+                    <div class="text-center">
+                        <p class="font-semibold mb-2">Comparte este examen:</p>
+                        <button id="share-page-btn" class="bg-gray-700 text-white font-bold py-2 px-5 rounded-lg hover:bg-gray-800 transition-colors">
+                            Compartir Página
+                        </button>
+                    </div>
+                    <div class="text-center">
+                         <p class="font-semibold mb-2">o escanea el código:</p>
+                         <img id="qr-code" src="" alt="Código QR para acceder al examen" class="w-28 h-28 mx-auto rounded-lg shadow-md">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- 2. Pantalla del Examen -->
+        <div id="test-screen">
+            <header class="bg-white p-4 rounded-2xl shadow-lg mb-6 sticky top-4 z-10">
+                <div class="flex justify-between items-center"><h2 class="text-xl font-bold hw-blue-text">Henry Wallon Test</h2><div id="timer" class="text-2xl font-extrabold text-white bg-red-600 px-4 py-2 rounded-lg shadow-md">45:00</div></div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progress-bar" class="bg-hw-yellow h-2.5 rounded-full" style="width: 0%"></div></div>
+            </header>
+            <div id="question-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl min-h-[300px]"></div>
+            <div class="mt-6 flex justify-between"><button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-colors">Anterior</button><button id="next-btn" class="hw-blue-bg text-white font-bold py-2 px-8 rounded-lg hover:bg-opacity-90 transition-colors">Siguiente</button></div>
+        </div>
+        <!-- 3. Pantalla de Resultados -->
+        <div id="results-screen">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
+                <h2 class="text-4xl md:text-5xl font-black hw-red mb-4">HENRY WALLON TEAM</h2>
+                <p class="text-xl md:text-2xl font-bold text-gray-700 mb-6">- Somos cuna de campeones -</p>
+                <img src="https://ihw.edu.mx/wp-content/uploads/2024/09/bufalo_mascota_ihw.png" alt="Mascota Búfalo IHW" class="mx-auto mb-8 h-48 w-48 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x200/FFFFFF/000000?text=Mascota+IHW';">
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-600">Resultado del Placement Test</h3>
+                    <p id="final-score" class="text-2xl font-bold text-gray-800 mt-2"></p>
+                    <p id="final-level" class="text-5xl font-extrabold hw-blue-text mt-1"></p>
+                    <p id="level-description" class="text-gray-600 mt-4"></p>
+                </div>
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button id="review-answers-btn" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg">Revisar</button>
+                    <button id="download-pdf-btn" class="w-full hw-blue-bg text-white font-bold py-3 px-6 rounded-lg text-lg">Descargar PDF</button>
+                    <a id="whatsapp-share-btn" href="#" target="_blank" class="w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg text-lg inline-flex items-center justify-center">
+                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.655 4.357 1.849 6.081l-1.214 4.439 4.572-1.202z M8.228 7.334c.193-.459.139-.959-.139-1.314-.276-.356-.63-.57-.999-.57h-.043c-.367 0-.72.13-1.011.381-.29.25-.503.583-.627.959-.123.376-.185.799-.163 1.228.023.429.167.851.411 1.231.242.38.58.758 1.005 1.123.423.366.901.701 1.426.989.525.288 1.101.515 1.712.668.61.153 1.265.229 1.96.229.67 0 1.315-.098 1.912-.295.598-.197 1.153-.495 1.658-.879.506-.384.951-.831 1.32-1.32.368-.489.659-1.021.861-1.581.202-.56.304-1.14.282-1.718-.022-.577-.167-1.132-.428-1.644s-.623-.942-1.057-1.27-1.01-.502-1.58-.502h-.043c-.59 0-1.133.248-1.513.681-.381.433-.646.999-.772 1.592-.126.592-.07 1.215.158 1.756.229.541.58 1.005 1.031 1.36.452.354.98.61 1.542.758.562.148 1.153.22 1.756.22.602 0 1.18-.072 1.707-.218.527-.146 1.01-.383 1.432-.701.423-.318.78-.71 1.062-1.157.283-.447.47-.93.552-1.426.082-.496.043-1.011-.119-1.488-.161-.477-.422-.901-.768-1.248-.346-.347-.772-.61-1.24-.768-.468-.158-.96-.23-1.455-.218-.495.012-.98.116-1.432.318s-.86.495-1.19.851c-.33.356-.562.772-.681 1.215-.119.443-.139.909-.043 1.36.095.451.297.875.58 1.24s.639.668 1.031.879c.393.21 1.13.468 1.455.318.325-.15.468-.422.468-.422s.14-.082.283-.283c.143-.201.202-.346.22-.422.018-.076.018-.173 0-.283-.018-.109-.158-.262-.318-.443-.161-.181-.363-.346-.58-.468-.218-.123-.477-.202-.746-.24-.27-.038-.539-.018-.799.082-.26.1-.5.283-.681.527-.181.243-.301.527-.346.828-.046.301-.018.61.082.901.1.29.283.562.527.772.243.21.527.363.828.443.301.082.6.095.889.043.29-.052.562-.173.799-.346.238-.174.452-.411.627-.681.174-.27.301-.577.363-.889.062-.312.052-.639-.018-.951-.07-.312-.21-.602-.411-.86-.201-.258-.452-.477-.746-.639-.294-.161-.61-.258-.93-.283-.32-.025-.648.025-.951.151-.303.125-.577.318-.807.562-.229.244-.411.541-.527.879-.116.338-.161.69-.126 1.031z"/></svg>
+                        Compartir
+                    </a>
+                </div>
+                <div class="mt-8"><p class="mb-4 font-semibold text-gray-700">Tus resultados han sido guardados y enviados al administrador. ¡Gracias!</p></div>
+                <div class="mt-8 text-xs text-gray-500"><p>Creado por Tchr V. Barrientos</p><button id="dev-toggle-button-results" class="text-blue-500 underline">Modo Desarrollador</button></div>
+            </div>
+        </div>
+        <!-- 4. Pantalla de Revisión -->
+        <div id="review-screen" class="bg-white p-8 rounded-2xl shadow-2xl mt-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-extrabold hw-blue-text">Revisión del Examen</h2>
+                <button id="back-to-results-btn" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg">Volver</button>
+            </div>
+            <div id="review-container" class="space-y-6"></div>
+        </div>
+        <button id="dev-toggle-button" class="fixed bottom-4 right-4 bg-yellow-400 text-black p-2 rounded-full shadow-lg">Dev: Reset</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        
+        const { jsPDF } = window.jspdf;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSTOZF4Zkrs8gLg7Y6LY4PNnS3bOh9jpY",
+            authDomain: "henrywallontestapp.firebaseapp.com",
+            projectId: "henrywallontestapp",
+            storageBucket: "henrywallontestapp.firebasestorage.app",
+            messagingSenderId: "979261512738",
+            appId: "1:979261512738:web:cfd47ca78250e97964be7b",
+            measurementId: "G-6KSP4CESZ6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const testDurationMinutes = 45;
+        const questions = [
+            // Grammar (15 questions)
+            { type: 'grammar', question: "I ___ to the store yesterday.", options: ["go", "went", "gone", "going"], answer: "went" },
+            { type: 'grammar', question: "She ___ a doctor.", options: ["is", "are", "am", "be"], answer: "is" },
+            { type: 'grammar', question: "They have ___ their homework.", options: ["do", "did", "done", "doing"], answer: "done" },
+            { type: 'grammar', question: "He is ___ than his brother.", options: ["tall", "taller", "tallest", "more tall"], answer: "taller" },
+            { type: 'grammar', question: "If I ___ you, I would study more.", options: ["was", "am", "were", "be"], answer: "were" },
+            { type: 'grammar', question: "There isn't ___ sugar left.", options: ["many", "much", "some", "a lot"], answer: "much" },
+            { type: 'grammar', question: "The book ___ by Mark Twain.", options: ["was written", "wrote", "is writing", "write"], answer: "was written" },
+            { type: 'grammar', question: "I've been waiting ___ two hours.", options: ["since", "for", "at", "on"], answer: "for" },
+            { type: 'grammar', question: "My keys are not on the table. I must ___ them at home.", options: ["leave", "have left", "left", "leaving"], answer: "have left" },
+            { type: 'grammar', question: "She asked me ___ I was doing.", options: ["what", "that", "if", "which"], answer: "what" },
+            { type: 'grammar', question: "By the time the police arrived, the thief ___.", options: ["escapes", "had escaped", "has escaped", "was escaping"], answer: "had escaped" },
+            { type: 'grammar', question: "You ___ touch that, it's dangerous.", options: ["mustn't", "don't have to", "couldn't", "should"], answer: "mustn't" },
+            { type: 'grammar', question: "I wish I ___ speak French.", options: ["can", "can to", "could", "would"], answer: "could" },
+            { type: 'grammar', question: "This is the house ___ I grew up.", options: ["which", "that", "where", "who"], answer: "where" },
+            { type: 'grammar', question: "Neither of the answers ___ correct.", options: ["is", "are", "be", "were"], answer: "is" },
+            // Proofreading (15 questions)
+            { type: 'proofreading', question: "Me and my friends went to the park.", options: ["Me", "friends", "went", "park"], answer: "Me" },
+            { type: 'proofreading', question: "There's to many people in this room.", options: ["There's", "to", "many", "room"], answer: "to" },
+            { type: 'proofreading', question: "The dog lost it's bone.", options: ["dog", "lost", "it's", "bone"], answer: "it's" },
+            { type: 'proofreading', question: "She is one of the best student in the class.", options: ["one", "best", "student", "class"], answer: "student" },
+            { type: 'proofreading', question: "I could of done that for you.", options: ["could of", "done", "that", "for you"], answer: "could of" },
+            { type: 'proofreading', question: "He did good on the test.", options: ["did", "good", "on", "test"], answer: "good" },
+            { type: 'proofreading', question: "Less people attended the event this year.", options: ["Less", "attended", "event", "year"], answer: "Less" },
+            { type: 'proofreading', question: "The effects of the storm was devastating.", options: ["effects", "storm", "was", "devastating"], answer: "was" },
+            { type: 'proofreading', question: "Her and I are going to the movies.", options: ["Her", "I", "are going", "movies"], answer: "Her" },
+            { type: 'proofreading', question: "I'm laying down for a nap.", options: ["I'm", "laying", "down", "nap"], answer: "laying" },
+            { type: 'proofreading', question: "Who's book is this on the table?", options: ["Who's", "book", "is this", "on the table"], answer: "Who's" },
+            { type: 'proofreading', question: "The data are clear and supports the conclusion.", options: ["data", "are", "supports", "conclusion"], answer: "supports" },
+            { type: 'proofreading', question: "I am very exciting about the trip.", options: ["am", "very", "exciting", "about"], answer: "exciting" },
+            { type: 'proofreading', question: "Between you and I, this is a secret.", options: ["Between", "you and I", "this is", "a secret"], answer: "you and I" },
+            { type: 'proofreading', question: "The amount of cars on the road is increasing.", options: ["amount", "cars", "on the road", "is"], answer: "amount" },
+            // Reading (2 long texts)
+            { type: 'reading', text: "The phenomenon of urban heat islands (UHIs) is a significant environmental challenge facing cities worldwide. A UHI is a metropolitan area that is significantly warmer than its surrounding rural areas due to human activities. The main cause is the modification of land surfaces. Materials like concrete and asphalt, common in cities, absorb and retain more of the sun's heat than natural landscapes like forests and water bodies. This retained heat is then released, particularly at night, keeping the city warmer. Waste heat generated by energy usage is a secondary contributor. UHIs can have serious consequences, including increased energy consumption for cooling, elevated emissions of air pollutants and greenhouse gases, compromised human health and comfort, and impaired water quality. To mitigate these effects, cities are implementing strategies such as increasing tree and vegetative cover, installing green roofs, and using cool, reflective materials for pavements and roofs.", sub_questions: [ { question: "What is the primary cause of the urban heat island effect?", options: ["Air pollution from cars", "The modification of land surfaces with heat-absorbing materials", "Waste heat from industrial factories", "A lack of wind in cities"], answer: "The modification of land surfaces with heat-absorbing materials" }, { question: "Which of the following is NOT mentioned as a consequence of UHIs?", options: ["Higher energy bills for air conditioning", "Better water quality in rivers", "Increased air pollution", "Negative impacts on human health"], answer: "Better water quality in rivers" }, { question: "What is a 'cool roof' designed to do?", options: ["Absorb more heat", "Reflect more sunlight", "Generate electricity", "Store rainwater"], answer: "Reflect more sunlight" } ] },
+            { type: 'reading', text: "The history of cryptography, the practice of secure communication, is as old as writing itself. Ancient civilizations used simple methods to conceal messages. The Spartans, for example, used a scytale, a cylinder with a strip of parchment wound around it, to create a transposition cipher. Julius Caesar used a simple substitution cipher, shifting each letter by a set number of places in the alphabet. For centuries, these methods were sufficient. However, the advent of frequency analysis in the 9th century by Arab scholar Al-Kindi rendered most simple substitution ciphers insecure. This led to the development of more complex polyalphabetic ciphers, like the Vigenère cipher, which were considered unbreakable for centuries. The real revolution came in the 20th century with the invention of mechanical and electronic devices, such as the Enigma machine used by Germany in World War II. The successful breaking of Enigma by Allied cryptanalysts, including Alan Turing, was a pivotal moment in the war and the history of computing. Today, cryptography is based on complex mathematical principles and is essential for securing everything from e-commerce to national security.", sub_questions: [ { question: "What was the main weakness of simple substitution ciphers like Caesar's?", options: ["They were too difficult to use", "They were vulnerable to frequency analysis", "They required a special machine", "They could only be used for short messages"], answer: "They were vulnerable to frequency analysis" }, { question: "What was the Enigma machine?", options: ["A type of polyalphabetic cipher", "A tool for frequency analysis", "An ancient Greek cryptographic device", "A mechanical and electronic cipher machine"], answer: "A mechanical and electronic cipher machine" }, { question: "What is modern cryptography primarily based on?", options: ["Letter substitution", "Mechanical devices", "Complex mathematical principles", "Transposition of letters"], answer: "Complex mathematical principles" } ] },
+            // Listening (YouTube Video)
+            { type: 'listening', videoId: 'E-Y1CNWmVrg', sub_questions: [ { question: "1. Which of these things did Emma do?", options: ["Left home early", "Take a train", "Made a good impression with her interviewer"], answer: "Made a good impression with her interviewer" }, { question: "2. Which of these things did Emma NOT do?", options: ["Book a taxi", "Pack her things in the morning", "Reschedule the interview"], answer: "Reschedule the interview" }, { question: "3. Which of these things did Tyler do?", options: ["Listen to his friend", "Raise his voice", "Take a step back"], answer: "Take a step back" }, { question: "4. Which of these things did Tyler NOT do?", options: ["Misunderstand his friend", "Have patience", "Apologise several times"], answer: "Have patience" }, { question: "5. Which of these things did James do?", options: ["See that her colleague was struggling", "Ask his colleague if she needed support", "Learn something from helping her"], answer: "Learn something from helping her" } ] },
+            // Writing
+            { type: 'writing', question: "What is your opinion on the importance of learning a second language? Discuss the advantages it can bring to a person's life and career." }
+        ];
+
+        const startScreen = document.getElementById('start-screen'), testScreen = document.getElementById('test-screen'), resultsScreen = document.getElementById('results-screen'), reviewScreen = document.getElementById('review-screen'), startBtn = document.getElementById('start-btn'), userInfoForm = document.getElementById('user-info-form'), examTimeEl = document.getElementById('examTime'), timerEl = document.getElementById('timer'), questionContainer = document.getElementById('question-container'), progressBar = document.getElementById('progress-bar'), nextBtn = document.getElementById('next-btn'), prevBtn = document.getElementById('prev-btn'), devToggleBtn = document.getElementById('dev-toggle-button'), devToggleBtnResults = document.getElementById('dev-toggle-button-results'), reviewAnswersBtn = document.getElementById('review-answers-btn'), downloadPdfBtn = document.getElementById('download-pdf-btn'), reviewContainer = document.getElementById('review-container'), backToResultsBtn = document.getElementById('back-to-results-btn'), whatsappShareBtn = document.getElementById('whatsapp-share-btn'), sharePageBtn = document.getElementById('share-page-btn'), qrCodeImg = document.getElementById('qr-code');
+        let currentQuestionIndex = 0, userAnswers = new Array(questions.length).fill(null), timerInterval, testStartTime, userData = {}, finalResults = {}, lastShownSection = null;
+        
+        function renderQuestion(index) {
+            const q = questions[index];
+            if(q.type !== lastShownSection) {
+                showSectionModal(q.type);
+                lastShownSection = q.type;
+            }
+            let html = '';
+            const questionNumber = index + 1;
+            const totalQuestions = questions.length;
+            html += `<div class="mb-4"><p class="text-sm font-semibold text-gray-500">Pregunta ${questionNumber} de ${totalQuestions}</p></div>`;
+            if (q.type === 'grammar' || q.type === 'proofreading') {
+                const instruction = q.type === 'proofreading' ? '<p class="text-sm text-red-600 mb-2">Instrucción: Elige la palabra o frase incorrecta.</p>' : '';
+                html += `<h3 class="text-xl md:text-2xl font-semibold mb-6">${q.question}</h3>${instruction}<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                q.options.forEach(option => {
+                    const isSelected = userAnswers[index] === option ? 'selected' : '';
+                    html += `<button class="option-btn p-4 border rounded-lg text-left ${isSelected}" onclick="selectAnswer(${index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                });
+                html += `</div>`;
+            } else if (q.type === 'reading') {
+                html += `<div class="prose max-w-none mb-6"><strong>Reading Comprehension:</strong><br>${q.text}</div>`;
+                q.sub_questions.forEach((sub_q, sub_index) => {
+                    html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
+                    sub_q.options.forEach(option => {
+                        const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
+                        html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                    });
+                    html += `</div></div>`;
+                });
+            } else if (q.type === 'listening') {
+                html += `<div class="prose max-w-none mb-6"><strong>Listening Comprehension:</strong><br>Watch the video carefully and answer the questions below.</div>`;
+                html += `<div id="player" class="my-6 aspect-video"></div>`;
+                q.sub_questions.forEach((sub_q, sub_index) => {
+                    html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
+                    sub_q.options.forEach(option => {
+                        const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
+                        html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                    });
+                    html += `</div></div>`;
+                });
+            } else if (q.type === 'writing') {
+                const currentAnswer = userAnswers[index] || '';
+                html += `<h3 class="text-xl md:text-2xl font-semibold mb-4">${q.question}</h3><textarea id="writing-answer" class="w-full h-48 p-3 border rounded-lg" oninput="saveWritingAnswer(${index})">${currentAnswer}</textarea>`;
+            }
+            questionContainer.innerHTML = html;
+            if (q.type === 'listening') loadYouTubePlayer(q.videoId);
+            updateNavigation();
+            updateProgressBar();
+        }
+        let player;
+        function loadYouTubePlayer(videoId) { if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') { var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; var firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); window.onYouTubeIframeAPIReady = () => createPlayer(videoId); } else { createPlayer(videoId); } }
+        function createPlayer(videoId) { if (player) player.destroy(); player = new YT.Player('player', { height: '100%', width: '100%', videoId: videoId, playerVars: { 'hl': 'en', 'rel': 0 } }); }
+        window.selectAnswer = (qIndex, answer) => { userAnswers[qIndex] = answer; renderQuestion(qIndex); }
+        window.selectSubAnswer = (qIndex, subQIndex, answer) => { if (!userAnswers[qIndex]) userAnswers[qIndex] = []; userAnswers[qIndex][subQIndex] = answer; renderQuestion(qIndex); }
+        window.saveWritingAnswer = (qIndex) => { userAnswers[qIndex] = document.getElementById('writing-answer').value; }
+        function updateNavigation() { prevBtn.disabled = currentQuestionIndex === 0; prevBtn.classList.toggle('opacity-50', prevBtn.disabled); nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? 'Finalizar Examen' : 'Siguiente'; nextBtn.classList.toggle('bg-green-600', currentQuestionIndex === questions.length - 1); nextBtn.classList.toggle('hover:bg-green-700', currentQuestionIndex === questions.length - 1); nextBtn.classList.toggle('hw-blue-bg', currentQuestionIndex !== questions.length - 1); }
+        function updateProgressBar() { progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`; }
+        nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
+        prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
+        function startTimer() { let timeLeft = testDurationMinutes * 60; timerInterval = setInterval(() => { timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { clearInterval(timerInterval); alert('¡Tiempo terminado!'); finishTest(); } }, 1000); }
+        function startTest() { if (!userInfoForm.checkValidity()) { userInfoForm.reportValidity(); return; } userData = { fullName: document.getElementById('fullName').value, section: document.getElementById('section').value, school: document.getElementById('school').value, examTime: testStartTime.toLocaleString('es-MX') }; localStorage.setItem('henryWallonTestTaken', 'true'); startScreen.style.display = 'none'; testScreen.style.display = 'block'; devToggleBtn.style.display = 'none'; renderQuestion(currentQuestionIndex); startTimer(); }
+        function finishTest() { clearInterval(timerInterval); finalResults = calculateResults(); showResults(finalResults); saveResultsToFirestore(finalResults); }
+        function calculateResults() {
+            let score = 0, scorableQuestions = 0;
+            questions.forEach((q, index) => {
+                if (q.type === 'grammar' || q.type === 'proofreading') { scorableQuestions++; if (userAnswers[index] === q.answer) score++; }
+                else if ((q.type === 'reading' || q.type === 'listening') && q.sub_questions) {
+                    q.sub_questions.forEach((sub_q, sub_index) => { scorableQuestions++; if (userAnswers[index] && userAnswers[index][sub_index] === sub_q.answer) score++; });
+                }
+            });
+            const percentage = scorableQuestions > 0 ? (score / scorableQuestions) * 100 : 0;
+            let level = 'A1', description = 'Nivel Básico.';
+            if (percentage > 85) { level = 'B2'; description = 'Nivel Independiente Avanzado.'; } 
+            else if (percentage > 65) { level = 'B1'; description = 'Nivel Independiente.'; } 
+            else if (percentage > 40) { level = 'A2'; description = 'Nivel Básico Avanzado.'; }
+            return { score, total: scorableQuestions, level, description };
+        }
+        function showResults(results) {
+            testScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+            devToggleBtnResults.style.display = 'block';
+            document.getElementById('final-score').textContent = `Puntuación: ${results.score} de ${results.total}`;
+            document.getElementById('final-level').textContent = results.level;
+            document.getElementById('level-description').textContent = results.description;
+            // --- Lógica para compartir y enviar ---
+            const teacherEmail = 'TeachingandlearningV@gmail.com';
+            const writingQuestionObject = questions.find(q => q.type === 'writing');
+            const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta.";
+            const message = `Resultados del Placement Test - Henry Wallon:\n\n` + `Nombre: ${userData.fullName}\n` + `Sección: ${userData.section}\n` + `Escuela: ${userData.school}\n` + `Fecha: ${new Date().toLocaleString('es-MX')}\n\n` + `*RESULTADO OBTENIDO:*\n` + `Puntuación: ${results.score}/${results.total}\n` + `*Nivel CEFR: ${results.level}*\n\n` + `*Respuesta de Writing:*\n${writingAnswer}`;
+            const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            whatsappShareBtn.href = whatsappLink;
+            const subject = `Resultados del Test de ${userData.fullName}`;
+            const mailtoLink = `mailto:${teacherEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = mailtoLink;
+            document.body.appendChild(iframe);
+            setTimeout(() => { document.body.removeChild(iframe); }, 1000);
+        }
+        async function saveResultsToFirestore(results) { const writingQuestionObject = questions.find(q => q.type === 'writing'); const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta."; try { await addDoc(collection(db, "results"), { fullName: userData.fullName, section: userData.section, school: userData.school, examDate: new Date(), score: results.score, totalQuestions: results.total, level: results.level, writingAnswer: writingAnswer }); } catch (e) { console.error("Error adding document: ", e); } }
+        function checkTestStatus() { if (localStorage.getItem('henryWallonTestTaken')) { startBtn.textContent = 'Ya has realizado este examen'; startBtn.disabled = true; startBtn.classList.add('opacity-50'); devToggleBtn.style.display = 'block'; } }
+        function resetTestState() { if (confirm('¿Estás seguro?')) { localStorage.removeItem('henryWallonTestTaken'); location.reload(); } }
+        devToggleBtn.addEventListener('click', resetTestState);
+        devToggleBtnResults.addEventListener('click', resetTestState);
+        
+        const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAEAASURBVHgB7N15lFTV+T/wn3t3l3Z3d3d3d3d3d3d3l3Z3d5e7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u-D-Y1CNWmVrg';
+        downloadPdfBtn.addEventListener('click', () => {
+            const doc = new jsPDF();
+            if (logoBase64) { doc.addImage(logoBase64, 'PNG', 15, 10, 50, 25); }
+            doc.setFontSize(22); doc.text("Reporte de Placement Test", 105, 25, { align: 'center' });
+            doc.setFontSize(12); doc.text(`Nombre: ${userData.fullName}`, 15, 50); doc.text(`Escuela: ${userData.school}`, 15, 57); doc.text(`Fecha: ${new Date().toLocaleDateString('es-MX')}`, 15, 64);
+            doc.setLineWidth(0.5); doc.line(15, 70, 195, 70);
+            doc.setFontSize(18); doc.text("Resultado Obtenido", 105, 85, { align: 'center' });
+            doc.setFontSize(40); doc.setTextColor(0, 51, 102); doc.text(finalResults.level, 105, 105, { align: 'center' });
+            doc.setTextColor(0, 0, 0); doc.setFontSize(12); doc.text(`Puntuación: ${finalResults.score} de ${finalResults.total}`, 105, 115, { align: 'center' });
+            doc.setFontSize(11); doc.text(finalResults.description, 105, 122, { align: 'center' });
+            doc.save(`Reporte_Henry_Wallon_${userData.fullName.replace(/ /g, '_')}.pdf`);
+        });
+        reviewAnswersBtn.addEventListener('click', () => { resultsScreen.style.display = 'none'; reviewScreen.style.display = 'block'; renderReview(); });
+        backToResultsBtn.addEventListener('click', () => { reviewScreen.style.display = 'none'; resultsScreen.style.display = 'block'; });
+        function renderReview() {
+            reviewContainer.innerHTML = '';
+            questions.forEach((q, index) => {
+                let reviewHtml = `<div class="p-4 border rounded-lg">`;
+                reviewHtml += `<p class="font-bold mb-2">${index + 1}. ${q.question}</p>`;
+                const userAnswer = userAnswers[index];
+                if (q.type === 'grammar' || q.type === 'proofreading') {
+                    const isCorrect = userAnswer === q.answer;
+                    reviewHtml += `<p>Tu respuesta: <span class="font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userAnswer || 'No contestada'}</span></p>`;
+                    if (!isCorrect) { reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${q.answer}</span></p>`; }
+                } else if (q.type === 'reading' || q.type === 'listening') {
+                    reviewHtml += `<div class="pl-4 mt-2 space-y-2">`;
+                    q.sub_questions.forEach((sub_q, sub_index) => {
+                        const userSubAnswer = userAnswer ? userAnswer[sub_index] : undefined;
+                        const isCorrect = userSubAnswer === sub_q.answer;
+                        reviewHtml += `<div class="border-l-2 pl-2"><p class="font-semibold">${sub_q.question}</p>`;
+                        reviewHtml += `<p>Tu respuesta: <span class="font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userSubAnswer || 'No contestada'}</span></p>`;
+                        if (!isCorrect) { reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${sub_q.answer}</span></p>`; }
+                        reviewHtml += `</div>`;
+                    });
+                    reviewHtml += `</div>`;
+                } else if (q.type === 'writing') {
+                    reviewHtml += `<p class="font-semibold">Tu respuesta:</p><p class="mt-1 p-2 bg-gray-100 rounded">${userAnswer || 'No contestada'}</p>`;
+                }
+                reviewHtml += `</div>`;
+                reviewContainer.innerHTML += reviewHtml;
+            });
+        }
+        window.onload = () => { checkTestStatus(); testStartTime = new Date(); examTimeEl.textContent = testStartTime.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' }); startBtn.addEventListener('click', startTest); };
+    </script>
+</body>
 </html>
+
