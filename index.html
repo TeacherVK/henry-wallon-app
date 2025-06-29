@@ -8,7 +8,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- jsPDF para generar PDFs -->
+    <!-- jsPDF para generar PDFs (si se implementa en el futuro) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <!-- Google Fonts: Inter -->
@@ -18,11 +18,16 @@
     
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .hw-blue-bg { background-color: #003366; } .hw-blue-text { color: #003366; } .hw-red { color: #D72828; } .hw-yellow { background-color: #FFD700; }
+        .hw-blue-bg { background-color: #003366; }
+        .hw-blue-text { color: #003366; }
+        .hw-red { color: #D72828; }
+        .hw-yellow-bg { background-color: #FFD700; }
         #test-screen, #results-screen, #review-screen, #section-modal { display: none; }
-        .option-btn { transition: all 0.2s ease-in-out; border: 2px solid transparent; } .option-btn:hover { transform: translateY(-2px); border-color: #003366; }
+        .option-btn { transition: all 0.2s ease-in-out; border: 2px solid transparent; }
+        .option-btn:hover { transform: translateY(-2px); border-color: #003366; }
         .option-btn.selected { background-color: #003366; color: white; border-color: #003366; }
-        #timer { animation: pulse 2s infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        #timer { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
     </style>
 </head>
 <body class="hw-blue-bg text-gray-800 antialiased">
@@ -40,7 +45,7 @@
         <!-- 1. Pantalla de Inicio -->
         <div id="start-screen">
             <div class="bg-white p-8 rounded-2xl shadow-2xl text-center">
-                <img src="https://ihw.edu.mx/wp-content/uploads/2024/08/logo-henrywallon-white.png" alt="Logo Henry Wallon" class="mx-auto mb-6 h-24 hw-blue-bg p-4 rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x100/003366/FFFFFF?text=Henry+Wallon+Logo';">
+                <img src="https://ihw.edu.mx/wp-content/uploads/2024/08/logo-henrywallon-white.png" alt="Logo Henry Wallon" class="mx-auto mb-6 h-24 hw-blue-bg p-4 rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x100/003366/FFFFFF?text=Henry+Wallon';">
                 <h1 class="text-3xl md:text-4xl font-extrabold hw-blue-text mb-4">Placement Test</h1>
                 <p class="text-gray-600 mb-8">Evaluación de Nivel de Inglés (CEFR)</p>
                 <form id="user-info-form" class="text-left space-y-4">
@@ -60,7 +65,7 @@
         <div id="test-screen">
             <header class="bg-white p-4 rounded-2xl shadow-lg mb-6 sticky top-4 z-10">
                 <div class="flex justify-between items-center"><h2 class="text-xl font-bold hw-blue-text">Henry Wallon Test</h2><div id="timer" class="text-2xl font-extrabold text-white bg-red-600 px-4 py-2 rounded-lg shadow-md">60:00</div></div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progress-bar" class="bg-hw-yellow h-2.5 rounded-full" style="width: 0%"></div></div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4"><div id="progress-bar" class="hw-yellow-bg h-2.5 rounded-full" style="width: 0%"></div></div>
             </header>
             <div id="question-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl min-h-[300px]"></div>
             <div class="mt-6 flex justify-between"><button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-colors">Anterior</button><button id="next-btn" class="hw-blue-bg text-white font-bold py-2 px-8 rounded-lg hover:bg-opacity-90 transition-colors">Siguiente</button></div>
@@ -85,8 +90,8 @@
                     </a>
                 </div>
                 <div class="mt-8">
-                    <a href="clases.html" class="w-full md:w-auto inline-block bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-500 transition-colors">
-                        ¿Necesitas Ayuda? ¡Inscríbete a Clases en Línea!
+                    <a href="#" class="w-full md:w-auto inline-block bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-500 transition-colors">
+                        ¿Necesitas Ayuda? ¡Contáctanos!
                     </a>
                 </div>
                 <div class="mt-8 text-xs text-gray-500"><p>Creado por Tchr V. Barrientos</p></div>
@@ -103,24 +108,30 @@
     </div>
 
     <script type="module">
+        // --- Firebase and jsPDF Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         
         const { jsPDF } = window.jspdf;
 
+        // --- Firebase Configuration ---
+        // WARNING: Exposing API keys on the client side is a security risk.
+        // Ensure you have set up Firestore Security Rules to protect your data.
         const firebaseConfig = {
             apiKey: "AIzaSyBSTOZF4Zkrs8gLg7Y6LY4PNnS3bOh9jpY",
             authDomain: "henrywallontestapp.firebaseapp.com",
             projectId: "henrywallontestapp",
-            storageBucket: "henrywallontestapp.firebasestorage.app",
+            storageBucket: "henrywallontestapp.appspot.com", // Corrected domain
             messagingSenderId: "979261512738",
             appId: "1:979261512738:web:cfd47ca78250e97964be7b",
             measurementId: "G-6KSP4CESZ6"
         };
 
+        // --- Initialize Firebase ---
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
+        // --- Test Configuration ---
         const testDurationMinutes = 60;
         const questions = [
             // Grammar (25 questions)
@@ -167,7 +178,7 @@
             { type: 'proofreading', question: "The amount of cars on the road is increasing.", options: ["amount", "cars", "on the road", "is"], answer: "amount", explanation: "'Amount' se usa para incontables. Para contables (cars), se usa 'number'." },
             { type: 'proofreading', question: "Each of the boys get a prize.", options: ["Each", "boys", "get", "prize"], answer: "get", explanation: "Después de 'Each of', el verbo va en singular (gets)." },
             { type: 'proofreading', question: "I'm not sure if I can except your offer.", options: ["sure", "if", "except", "offer"], answer: "except", explanation: "'Except' significa 'a excepción de'. El verbo correcto es 'accept' (aceptar)." },
-            { type: 'proofreading', question: "The cat is sleeping on the couch, it looks tired.", options: ["cat", "is sleeping", "couch", "it"], answer: "it", explanation: "Esto es un 'comma splice' (unir dos oraciones independientes con una coma). Debería ser un punto o punto y coma antes de 'it'." },
+            { type: 'proofreading', question: "The cat is sleeping on the couch, it looks tired.", options: ["cat", "is sleeping", "couch, it", "looks tired"], answer: "couch, it", explanation: "Esto es un 'comma splice' (unir dos oraciones independientes con una coma). Debería ser un punto o punto y coma antes de 'it', o usar un conector.", correct_text: "The cat is sleeping on the couch; it looks tired." },
             { type: 'proofreading', question: "They're going to there house after school.", options: ["They're", "going", "there", "house"], answer: "there", explanation: "'There' indica un lugar. El posesivo es 'their'." },
             { type: 'proofreading', question: "Your a very talented artist.", options: ["Your", "a", "very", "talented"], answer: "Your", explanation: "'Your' es un posesivo. La forma correcta es 'You're' (contracción de you are)." },
             // Reading (3 long texts)
@@ -181,170 +192,11 @@
             { type: 'writing', question: "What is your opinion on the importance of learning a second language? Discuss the advantages it can bring to a person's life and career." }
         ];
 
-        let currentQuestionIndex = 0, userAnswers = new Array(questions.length).fill(null), timerInterval, testStartTime, userData = {}, finalResults = {}, lastShownSection = null;
-        
-        function renderQuestion(index) {
-            const q = questions[index];
-            if(q.type !== lastShownSection) {
-                showSectionModal(q.type);
-                lastShownSection = q.type;
-            }
-            let html = '';
-            const questionNumber = index + 1;
-            const totalQuestions = questions.length;
-            html += `<div class="mb-4"><p class="text-sm font-semibold text-gray-500">Pregunta ${questionNumber} de ${totalQuestions}</p></div>`;
-            if (q.type === 'grammar' || q.type === 'proofreading') {
-                const instruction = q.type === 'proofreading' ? '<p class="text-sm text-red-600 mb-2">Instrucción: Elige la palabra o frase incorrecta.</p>' : '';
-                html += `<h3 class="text-xl md:text-2xl font-semibold mb-6">${q.question}</h3>${instruction}<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
-                q.options.forEach(option => {
-                    const isSelected = userAnswers[index] === option ? 'selected' : '';
-                    html += `<button class="option-btn p-4 border rounded-lg text-left ${isSelected}" onclick="selectAnswer(${index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
-                });
-                html += `</div>`;
-            } else if (q.type === 'reading') {
-                html += `<div class="prose max-w-none mb-6"><strong>Reading Comprehension:</strong><br>${q.text}</div>`;
-                q.sub_questions.forEach((sub_q, sub_index) => {
-                    html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
-                    sub_q.options.forEach(option => {
-                        const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
-                        html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
-                    });
-                    html += `</div></div>`;
-                });
-            } else if (q.type === 'listening') {
-                html += `<div class="prose max-w-none mb-6"><strong>Listening Comprehension:</strong><br>Watch the video carefully and answer the questions below.</div>`;
-                html += `<div id="player" class="my-6 aspect-video"></div>`;
-                q.sub_questions.forEach((sub_q, sub_index) => {
-                    html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
-                    sub_q.options.forEach(option => {
-                        const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
-                        html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
-                    });
-                    html += `</div></div>`;
-                });
-            } else if (q.type === 'writing') {
-                const currentAnswer = userAnswers[index] || '';
-                html += `<h3 class="text-xl md:text-2xl font-semibold mb-4">${q.question}</h3><textarea id="writing-answer" class="w-full h-48 p-3 border rounded-lg" onpaste="return false;" oninput="saveWritingAnswer(${index})">${currentAnswer}</textarea>`;
-            }
-            questionContainer.innerHTML = html;
-            if (q.type === 'listening') loadYouTubePlayer(q.videoId);
-            updateNavigation();
-            updateProgressBar();
-        }
-        let player;
-        function loadYouTubePlayer(videoId) { if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') { var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; var firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); window.onYouTubeIframeAPIReady = () => createPlayer(videoId); } else { createPlayer(videoId); } }
-        function createPlayer(videoId) { if (player) player.destroy(); player = new YT.Player('player', { height: '100%', width: '100%', videoId: videoId, playerVars: { 'hl': 'en', 'rel': 0 } }); }
-        window.selectAnswer = (qIndex, answer) => { userAnswers[qIndex] = answer; renderQuestion(qIndex); }
-        window.selectSubAnswer = (qIndex, subQIndex, answer) => { if (!userAnswers[qIndex]) userAnswers[qIndex] = []; userAnswers[qIndex][subQIndex] = answer; renderQuestion(qIndex); }
-        window.saveWritingAnswer = (qIndex) => { userAnswers[qIndex] = document.getElementById('writing-answer').value; }
-        function updateNavigation() { prevBtn.disabled = currentQuestionIndex === 0; prevBtn.classList.toggle('opacity-50', prevBtn.disabled); nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? 'Finalizar Examen' : 'Siguiente'; nextBtn.classList.toggle('bg-green-600', currentQuestionIndex === questions.length - 1); nextBtn.classList.toggle('hover:bg-green-700', currentQuestionIndex === questions.length - 1); nextBtn.classList.toggle('hw-blue-bg', currentQuestionIndex !== questions.length - 1); }
-        function updateProgressBar() { progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`; }
-        
-        function startTimer() { let timeLeft = testDurationMinutes * 60; timerInterval = setInterval(() => { timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { clearInterval(timerInterval); alert('¡Tiempo terminado!'); finishTest(); } }, 1000); }
-        function startTest() { if (!userInfoForm.checkValidity()) { userInfoForm.reportValidity(); return; } userData = { fullName: document.getElementById('fullName').value, section: document.getElementById('section').value, school: document.getElementById('school').value, examTime: testStartTime.toLocaleString('es-MX') }; localStorage.setItem('henryWallonTestTaken', 'true'); startScreen.style.display = 'none'; testScreen.style.display = 'block'; renderQuestion(currentQuestionIndex); startTimer(); }
-        function finishTest() { clearInterval(timerInterval); finalResults = calculateResults(); showResults(finalResults); saveResultsToFirestore(finalResults); }
-        function calculateResults() {
-            let score = 0, scorableQuestions = 0;
-            let sectionScores = { grammar: 0, proofreading: 0, reading: 0, listening: 0 };
-            let sectionTotals = { grammar: 0, proofreading: 0, reading: 0, listening: 0 };
-            
-            questions.forEach((q, index) => {
-                if (q.type === 'grammar' || q.type === 'proofreading') {
-                    scorableQuestions++;
-                    sectionTotals[q.type]++;
-                    if (userAnswers[index] === q.answer) {
-                        score++;
-                        sectionScores[q.type]++;
-                    }
-                } else if ((q.type === 'reading' || q.type === 'listening') && q.sub_questions) {
-                    q.sub_questions.forEach((sub_q, sub_index) => {
-                        scorableQuestions++;
-                        sectionTotals[q.type]++;
-                        if (userAnswers[index] && userAnswers[index][sub_index] === sub_q.answer) {
-                            score++;
-                            sectionScores[q.type]++;
-                        }
-                    });
-                }
-            });
-            const percentage = scorableQuestions > 0 ? (score / scorableQuestions) * 100 : 0;
-            let level = 'A1', description = 'Nivel Básico.';
-            if (percentage > 85) { level = 'B2'; description = 'Nivel Independiente Avanzado.'; } 
-            else if (percentage > 65) { level = 'B1'; description = 'Nivel Independiente.'; } 
-            else if (percentage > 40) { level = 'A2'; description = 'Nivel Básico Avanzado.'; }
-            return { score, total: scorableQuestions, level, description, sectionScores, sectionTotals };
-        }
-        function showResults(results) {
-            testScreen.style.display = 'none';
-            resultsScreen.style.display = 'block';
-            document.getElementById('final-score').textContent = `Puntuación: ${results.score} de ${results.total}`;
-            document.getElementById('final-level').textContent = results.level;
-            document.getElementById('level-description').textContent = results.description;
-            // --- Lógica para compartir y enviar ---
-            const teacherEmail = 'TeachingandlearningV@gmail.com';
-            const writingQuestionObject = questions.find(q => q.type === 'writing');
-            const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta.";
-            const message = `Resultados del Placement Test - Henry Wallon:\n\n` + `Nombre: ${userData.fullName}\n` + `Sección: ${userData.section}\n` + `Escuela: ${userData.school}\n` + `Fecha: ${new Date().toLocaleString('es-MX')}\n\n` + `*RESULTADO OBTENIDO:*\n` + `Puntuación: ${results.score}/${results.total}\n` + `*Nivel CEFR: ${results.level}*\n\n` + `*Respuesta de Writing:*\n${writingAnswer}`;
-            const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-            whatsappShareBtn.href = whatsappLink;
-            const subject = `Resultados del Test de ${userData.fullName}`;
-            const mailtoLink = `mailto:${teacherEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = mailtoLink;
-            document.body.appendChild(iframe);
-            setTimeout(() => { document.body.removeChild(iframe); }, 1000);
-        }
-        async function saveResultsToFirestore(results) { const writingQuestionObject = questions.find(q => q.type === 'writing'); const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta."; try { await addDoc(collection(db, "results"), { fullName: userData.fullName, section: userData.section, school: userData.school, examDate: new Date(), score: results.score, totalQuestions: results.total, level: results.level, writingAnswer: writingAnswer }); } catch (e) { console.error("Error adding document: ", e); } }
-        function checkTestStatus() { if (localStorage.getItem('henryWallonTestTaken')) { startBtn.textContent = 'Ya has realizado este examen'; startBtn.disabled = true; startBtn.classList.add('opacity-50'); } }
-        
-        function getRecommendations(level) {
-            const recommendations = {
-                'A1': "Para mejorar, enfócate en vocabulario básico (saludos, números, días). Practica con apps como Duolingo y escucha canciones infantiles en inglés.",
-                'A2': "Sigue expandiendo tu vocabulario y empieza a formar frases más complejas. Intenta ver series o películas con subtítulos en inglés y leer textos sencillos.",
-                'B1': "¡Vas muy bien! Para llegar al siguiente nivel, practica la fluidez. Intenta tener conversaciones cortas, escribe textos sobre temas que te interesan y lee noticias en inglés.",
-                'B2': "Estás en un nivel avanzado. Para perfeccionarlo, consume contenido complejo como documentales, podcasts y libros. Practica escribir ensayos y busca oportunidades para hablar con nativos."
-            };
-            return recommendations[level] || "Sigue practicando para mejorar tu nivel.";
-        }
-        function showSectionModal(type) {
-            const titles = { grammar: 'Sección de Gramática', proofreading: 'Sección de Corrección', reading: 'Comprensión de Lectura', listening: 'Comprensión Auditiva', writing: 'Sección de Escritura' };
-            const instructions = { grammar: 'Elige la opción correcta para completar cada oración.', proofreading: 'Encuentra y selecciona el error en cada oración.', reading: 'Lee los textos atentamente y responde las preguntas.', listening: 'Mira el video y responde las preguntas de comprensión.', writing: 'Escribe un ensayo corto sobre el tema propuesto.' };
-            modalTitle.textContent = titles[type] || 'Nueva Sección';
-            modalInstruction.textContent = instructions[type] || 'Prepárate para la siguiente sección.';
-            sectionModal.style.display = 'flex';
-        }
-        function renderReview() {
-            reviewContainer.innerHTML = '';
-            questions.forEach((q, index) => {
-                let reviewHtml = `<div class="p-4 border rounded-lg">`;
-                reviewHtml += `<p class="font-bold mb-2">${index + 1}. ${q.question}</p>`;
-                const userAnswer = userAnswers[index];
-                if (q.type === 'grammar' || q.type === 'proofreading') {
-                    const isCorrect = userAnswer === q.answer;
-                    reviewHtml += `<p>Tu respuesta: <span class="font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userAnswer || 'No contestada'}</span></p>`;
-                    if (!isCorrect) { reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${q.answer}</span></p><p class="text-sm text-gray-500 mt-1"><em>Explicación: ${q.explanation}</em></p>`; }
-                } else if (q.type === 'reading' || q.type === 'listening') {
-                    reviewHtml += `<div class="pl-4 mt-2 space-y-2">`;
-                    q.sub_questions.forEach((sub_q, sub_index) => {
-                        const userSubAnswer = userAnswer ? userAnswer[sub_index] : undefined;
-                        const isCorrect = userSubAnswer === sub_q.answer;
-                        reviewHtml += `<div class="border-l-2 pl-2"><p class="font-semibold">${sub_q.question}</p>`;
-                        reviewHtml += `<p>Tu respuesta: <span class="font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userSubAnswer || 'No contestada'}</span></p>`;
-                        if (!isCorrect) { reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${sub_q.answer}</span></p>`; }
-                        reviewHtml += `</div>`;
-                    });
-                    reviewHtml += `</div>`;
-                } else if (q.type === 'writing') {
-                    reviewHtml += `<p class="font-semibold">Tu respuesta:</p><p class="mt-1 p-2 bg-gray-100 rounded">${userAnswer || 'No contestada'}</p>`;
-                }
-                reviewHtml += `</div>`;
-                reviewContainer.innerHTML += reviewHtml;
-            });
-        }
-
+        // --- Main Application Logic ---
+        // FIX: All code is now inside window.onload to ensure the DOM is ready 
+        // and to correctly manage variable scope.
         window.onload = () => {
-            // FIX: All DOM element selections and event listeners are now inside window.onload
+            // --- DOM Element Selection ---
             const startBtn = document.getElementById('start-btn');
             const nextBtn = document.getElementById('next-btn');
             const prevBtn = document.getElementById('prev-btn');
@@ -366,15 +218,338 @@
             const modalTitle = document.getElementById('modal-title');
             const modalInstruction = document.getElementById('modal-instruction');
 
-            const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAEAASURBVHgB7N15lFTV+T/wn3t3l3Z3d3d3d3d3d3d3l3Z3d5e7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u-D-Y1CNWmVrg';
-            startBtn.addEventListener('click', startTest);
-            nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
-            prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
-            reviewAnswersBtn.addEventListener('click', () => { resultsScreen.style.display = 'none'; reviewScreen.style.display = 'block'; renderReview(); });
-            backToResultsBtn.addEventListener('click', () => { reviewScreen.style.display = 'none'; resultsScreen.style.display = 'block'; });
-            modalCloseBtn.addEventListener('click', () => { sectionModal.style.display = 'none'; });
+            // --- State Variables ---
+            let currentQuestionIndex = 0;
+            let userAnswers = new Array(questions.length).fill(null);
+            let timerInterval;
+            let testStartTime;
+            let userData = {};
+            let finalResults = {};
+            let lastShownSection = null;
+            let player;
 
-            // Initial setup calls
+            // --- Functions ---
+            function renderQuestion(index) {
+                const q = questions[index];
+                if (q.type !== lastShownSection) {
+                    showSectionModal(q.type);
+                    lastShownSection = q.type;
+                }
+                
+                let html = '';
+                const questionNumber = index + 1;
+                const totalQuestions = questions.length;
+                html += `<div class="mb-4"><p class="text-sm font-semibold text-gray-500">Pregunta ${questionNumber} de ${totalQuestions}</p></div>`;
+
+                if (q.type === 'grammar' || q.type === 'proofreading') {
+                    const instruction = q.type === 'proofreading' ? '<p class="text-sm text-red-600 mb-2">Instrucción: Elige la palabra o frase incorrecta.</p>' : '';
+                    html += `<h3 class="text-xl md:text-2xl font-semibold mb-6">${q.question}</h3>${instruction}<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                    q.options.forEach(option => {
+                        const isSelected = userAnswers[index] === option ? 'selected' : '';
+                        html += `<button class="option-btn p-4 border rounded-lg text-left ${isSelected}" onclick="selectAnswer(${index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                    });
+                    html += `</div>`;
+                } else if (q.type === 'reading') {
+                    html += `<div class="prose max-w-none mb-6"><strong>Reading Comprehension:</strong><br>${q.text.replace(/\n/g, '<br>')}</div>`;
+                    q.sub_questions.forEach((sub_q, sub_index) => {
+                        html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
+                        sub_q.options.forEach(option => {
+                            const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
+                            html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                } else if (q.type === 'listening') {
+                    html += `<div class="prose max-w-none mb-6"><strong>Listening Comprehension:</strong><br>Watch the video carefully and answer the questions below.</div>`;
+                    html += `<div id="player" class="my-6 aspect-video"></div>`;
+                    q.sub_questions.forEach((sub_q, sub_index) => {
+                        html += `<div class="mt-8 border-t pt-6"><h4 class="text-lg font-semibold mb-4">${sub_q.question}</h4><div class="space-y-3">`;
+                        sub_q.options.forEach(option => {
+                            const isSelected = userAnswers[index] && userAnswers[index][sub_index] === option ? 'selected' : '';
+                            html += `<button class="option-btn block w-full text-left p-3 border rounded-lg ${isSelected}" onclick="selectSubAnswer(${index}, ${sub_index}, '${option.replace(/'/g, "\\'")}')">${option}</button>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                } else if (q.type === 'writing') {
+                    const currentAnswer = userAnswers[index] || '';
+                    html += `<h3 class="text-xl md:text-2xl font-semibold mb-4">${q.question}</h3><textarea id="writing-answer" class="w-full h-48 p-3 border rounded-lg" onpaste="return false;" oninput="saveWritingAnswer(${index})">${currentAnswer}</textarea>`;
+                }
+                
+                questionContainer.innerHTML = html;
+                if (q.type === 'listening') loadYouTubePlayer(q.videoId);
+                updateNavigation();
+                updateProgressBar();
+            }
+
+            function loadYouTubePlayer(videoId) {
+                if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+                    var tag = document.createElement('script');
+                    // FIX: Corrected YouTube API URL
+                    tag.src = "https://www.youtube.com/iframe_api";
+                    var firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                    window.onYouTubeIframeAPIReady = () => createPlayer(videoId);
+                } else {
+                    createPlayer(videoId);
+                }
+            }
+
+            function createPlayer(videoId) {
+                if (player) player.destroy();
+                player = new YT.Player('player', {
+                    height: '100%',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: { 'hl': 'en', 'rel': 0 }
+                });
+            }
+
+            // FIX: Attach functions to window object so inline 'onclick' attributes can access them.
+            window.selectAnswer = (qIndex, answer) => {
+                userAnswers[qIndex] = answer;
+                renderQuestion(qIndex);
+            };
+
+            window.selectSubAnswer = (qIndex, subQIndex, answer) => {
+                if (!userAnswers[qIndex] || !Array.isArray(userAnswers[qIndex])) {
+                    userAnswers[qIndex] = [];
+                }
+                userAnswers[qIndex][subQIndex] = answer;
+                renderQuestion(qIndex);
+            };
+
+            window.saveWritingAnswer = (qIndex) => {
+                const textarea = document.getElementById('writing-answer');
+                if (textarea) {
+                    userAnswers[qIndex] = textarea.value;
+                }
+            };
+
+            function updateNavigation() {
+                prevBtn.disabled = currentQuestionIndex === 0;
+                prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.textContent = 'Finalizar Examen';
+                    nextBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    nextBtn.classList.remove('hw-blue-bg', 'hover:bg-opacity-90');
+                } else {
+                    nextBtn.textContent = 'Siguiente';
+                    nextBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    nextBtn.classList.add('hw-blue-bg', 'hover:bg-opacity-90');
+                }
+            }
+
+            function updateProgressBar() {
+                progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            }
+
+            function startTimer() {
+                let timeLeft = testDurationMinutes * 60;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert('¡Tiempo terminado!');
+                        finishTest();
+                    }
+                }, 1000);
+            }
+
+            function startTest() {
+                if (!userInfoForm.checkValidity()) {
+                    userInfoForm.reportValidity();
+                    return;
+                }
+                userData = {
+                    fullName: document.getElementById('fullName').value,
+                    section: document.getElementById('section').value,
+                    school: document.getElementById('school').value,
+                    examTime: testStartTime.toLocaleString('es-MX')
+                };
+                localStorage.setItem('henryWallonTestTaken', 'true');
+                startScreen.style.display = 'none';
+                testScreen.style.display = 'block';
+                renderQuestion(currentQuestionIndex);
+                startTimer();
+            }
+
+            function finishTest() {
+                clearInterval(timerInterval);
+                finalResults = calculateResults();
+                showResults(finalResults);
+                saveResultsToFirestore(finalResults);
+            }
+
+            function calculateResults() {
+                let score = 0, scorableQuestions = 0;
+                let sectionScores = { grammar: 0, proofreading: 0, reading: 0, listening: 0 };
+                let sectionTotals = { grammar: 0, proofreading: 0, reading: 0, listening: 0 };
+                
+                questions.forEach((q, index) => {
+                    if (q.type === 'grammar' || q.type === 'proofreading') {
+                        scorableQuestions++;
+                        sectionTotals[q.type]++;
+                        if (userAnswers[index] === q.answer) {
+                            score++;
+                            sectionScores[q.type]++;
+                        }
+                    } else if ((q.type === 'reading' || q.type === 'listening') && q.sub_questions) {
+                        q.sub_questions.forEach((sub_q, sub_index) => {
+                            scorableQuestions++;
+                            sectionTotals[q.type]++;
+                            if (userAnswers[index] && userAnswers[index][sub_index] === sub_q.answer) {
+                                score++;
+                                sectionScores[q.type]++;
+                            }
+                        });
+                    }
+                });
+
+                const percentage = scorableQuestions > 0 ? (score / scorableQuestions) * 100 : 0;
+                let level = 'A1', description = 'Nivel Básico.';
+                if (percentage > 85) { level = 'B2'; description = 'Nivel Independiente Avanzado.'; } 
+                else if (percentage > 65) { level = 'B1'; description = 'Nivel Independiente.'; } 
+                else if (percentage > 40) { level = 'A2'; description = 'Nivel Básico Avanzado.'; }
+                
+                return { score, total: scorableQuestions, level, description, sectionScores, sectionTotals };
+            }
+
+            function showResults(results) {
+                testScreen.style.display = 'none';
+                resultsScreen.style.display = 'block';
+                document.getElementById('final-score').textContent = `Puntuación: ${results.score} de ${results.total}`;
+                document.getElementById('final-level').textContent = results.level;
+                document.getElementById('level-description').textContent = results.description;
+                
+                const writingQuestionObject = questions.find(q => q.type === 'writing');
+                const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta.";
+                
+                const message = `Resultados del Placement Test - Henry Wallon:\n\n` +
+                                `Nombre: ${userData.fullName}\n` +
+                                `Sección: ${userData.section}\n` +
+                                `Escuela: ${userData.school}\n` +
+                                `Fecha: ${new Date().toLocaleString('es-MX')}\n\n` +
+                                `*RESULTADO OBTENIDO:*\n` +
+                                `Puntuación: ${results.score}/${results.total}\n` +
+                                `*Nivel CEFR: ${results.level}*\n\n` +
+                                `*Respuesta de Writing:*\n${writingAnswer}`;
+                
+                const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+                whatsappShareBtn.href = whatsappLink;
+
+                // REMOVED: The mailto: iframe method is unreliable and often blocked.
+                // The primary data collection method is Firestore.
+            }
+
+            async function saveResultsToFirestore(results) {
+                const writingQuestionObject = questions.find(q => q.type === 'writing');
+                const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta.";
+                try {
+                    await addDoc(collection(db, "results"), {
+                        fullName: userData.fullName,
+                        section: userData.section,
+                        school: userData.school,
+                        examDate: new Date(),
+                        score: results.score,
+                        totalQuestions: results.total,
+                        level: results.level,
+                        writingAnswer: writingAnswer,
+                        userAnswers: userAnswers // Opcional: guardar todas las respuestas
+                    });
+                    console.log("Results saved to Firestore successfully.");
+                } catch (e) {
+                    console.error("Error adding document to Firestore: ", e);
+                }
+            }
+
+            function checkTestStatus() {
+                if (localStorage.getItem('henryWallonTestTaken')) {
+                    startBtn.textContent = 'Ya has realizado este examen';
+                    startBtn.disabled = true;
+                    startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            function showSectionModal(type) {
+                const titles = { grammar: 'Sección de Gramática', proofreading: 'Sección de Corrección', reading: 'Comprensión de Lectura', listening: 'Comprensión Auditiva', writing: 'Sección de Escritura' };
+                const instructions = { grammar: 'Elige la opción correcta para completar cada oración.', proofreading: 'Encuentra y selecciona el error en cada oración.', reading: 'Lee los textos atentamente y responde las preguntas.', listening: 'Mira el video y responde las preguntas de comprensión.', writing: 'Escribe un ensayo corto sobre el tema propuesto.' };
+                modalTitle.textContent = titles[type] || 'Nueva Sección';
+                modalInstruction.textContent = instructions[type] || 'Prepárate para la siguiente sección.';
+                sectionModal.style.display = 'flex';
+            }
+
+            function renderReview() {
+                reviewContainer.innerHTML = '';
+                questions.forEach((q, index) => {
+                    let reviewHtml = `<div class="p-4 border rounded-lg bg-gray-50">`;
+                    const questionText = q.type === 'reading' || q.type === 'listening' ? `Sección de ${q.type.charAt(0).toUpperCase() + q.type.slice(1)}` : q.question;
+                    reviewHtml += `<p class="font-bold mb-2 text-gray-800">${index + 1}. ${questionText}</p>`;
+                    
+                    const userAnswer = userAnswers[index];
+                    
+                    if (q.type === 'grammar' || q.type === 'proofreading') {
+                        const isCorrect = userAnswer === q.answer;
+                        reviewHtml += `<p>Tu respuesta: <span class="font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userAnswer || 'No contestada'}</span></p>`;
+                        if (!isCorrect) {
+                            reviewHtml += `<p>Respuesta correcta: <span class="font-semibold text-green-600">${q.answer}</span></p>`;
+                            if (q.explanation) {
+                                reviewHtml += `<p class="text-sm text-gray-500 mt-1"><em>Explicación: ${q.explanation}</em></p>`;
+                            }
+                        }
+                    } else if (q.type === 'reading' || q.type === 'listening') {
+                        reviewHtml += `<div class="pl-4 mt-2 space-y-3">`;
+                        q.sub_questions.forEach((sub_q, sub_index) => {
+                            const userSubAnswer = userAnswer ? userAnswer[sub_index] : undefined;
+                            const isCorrect = userSubAnswer === sub_q.answer;
+                            reviewHtml += `<div class="border-l-2 pl-3 ${isCorrect ? 'border-green-500' : 'border-red-500'}"><p class="font-semibold text-gray-700">${sub_q.question}</p>`;
+                            reviewHtml += `<p class="text-sm">Tu respuesta: <span class="font-medium ${isCorrect ? 'text-green-600' : 'text-red-600'}">${userSubAnswer || 'No contestada'}</span></p>`;
+                            if (!isCorrect) {
+                                reviewHtml += `<p class="text-sm">Respuesta correcta: <span class="font-medium text-green-600">${sub_q.answer}</span></p>`;
+                            }
+                            reviewHtml += `</div>`;
+                        });
+                        reviewHtml += `</div>`;
+                    } else if (q.type === 'writing') {
+                        reviewHtml += `<p class="font-semibold">Tu respuesta:</p><p class="mt-1 p-2 bg-gray-100 rounded text-gray-700">${userAnswer || 'No contestada'}</p>`;
+                    }
+                    reviewHtml += `</div>`;
+                    reviewContainer.innerHTML += reviewHtml;
+                });
+            }
+
+            // --- Event Listeners ---
+            startBtn.addEventListener('click', startTest);
+            nextBtn.addEventListener('click', () => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    renderQuestion(currentQuestionIndex);
+                } else {
+                    finishTest();
+                }
+            });
+            prevBtn.addEventListener('click', () => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    renderQuestion(currentQuestionIndex);
+                }
+            });
+            reviewAnswersBtn.addEventListener('click', () => {
+                resultsScreen.style.display = 'none';
+                reviewScreen.style.display = 'block';
+                renderReview();
+            });
+            backToResultsBtn.addEventListener('click', () => {
+                reviewScreen.style.display = 'none';
+                resultsScreen.style.display = 'block';
+            });
+            modalCloseBtn.addEventListener('click', () => {
+                sectionModal.style.display = 'none';
+            });
+
+            // --- Initial Setup Calls ---
             checkTestStatus();
             testStartTime = new Date();
             examTimeEl.textContent = testStartTime.toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' });
@@ -382,5 +557,6 @@
     </script>
 </body>
 </html>
+
 
 
