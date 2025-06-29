@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Placement Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hw-blue-bg { background-color: #003366; }
+        .hw-blue-text { color: #003366; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Pantalla de Login -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-200">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <h2 class="text-3xl font-extrabold text-center hw-blue-text mb-6">Admin Login</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Correo Electrónico:</label>
+                    <input type="email" id="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Contraseña:</label>
+                    <input type="password" id="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <p id="login-error" class="text-red-500 text-sm hidden">Usuario o contraseña incorrectos.</p>
+                <button type="submit" class="w-full hw-blue-bg text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-opacity-90 transition-all">
+                    Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panel de Resultados (Dashboard) -->
+    <div id="dashboard-screen" class="hidden">
+        <header class="bg-white shadow-md">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold hw-blue-text">Resultados del Examen</h1>
+                <button id="logout-btn" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">Cerrar Sesión</button>
+            </nav>
+        </header>
+        <main class="container mx-auto p-6">
+            <div class="bg-white p-6 rounded-2xl shadow-xl">
+                <input type="text" id="search-input" placeholder="Buscar por nombre..." class="w-full mb-4 px-3 py-2 border border-gray-300 rounded-md">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-800 text-white">
+                            <tr>
+                                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Nombre Completo</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Nivel CEFR</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Puntuación</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Fecha</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-table-body" class="text-gray-700">
+                            <!-- Los resultados se insertarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+        // --- CONFIGURACIÓN DE FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSTOZF4Zkrs8gLg7Y6LY4PNnS3bOh9jpY",
+            authDomain: "henrywallontestapp.firebaseapp.com",
+            projectId: "henrywallontestapp",
+            storageBucket: "henrywallontestapp.firebasestorage.app",
+            messagingSenderId: "979261512738",
+            appId: "1:979261512738:web:cfd47ca78250e97964be7b",
+            measurementId: "G-6KSP4CESZ6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- LÓGICA DEL PANEL ---
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const resultsTableBody = document.getElementById('results-table-body');
+        const searchInput = document.getElementById('search-input');
+        
+        let allResults = [];
+
+        // Manejar Login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            loginError.classList.add('hidden');
+
+            signInWithEmailAndPassword(auth, email, password)
+                .catch((error) => {
+                    console.error("Login Error:", error);
+                    loginError.classList.remove('hidden');
+                });
+        });
+
+        // Manejar Logout
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // Escuchar cambios de autenticación
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuario ha iniciado sesión
+                loginScreen.style.display = 'none';
+                dashboardScreen.style.display = 'block';
+                fetchResults();
+            } else {
+                // Usuario ha cerrado sesión
+                loginScreen.style.display = 'flex';
+                dashboardScreen.style.display = 'none';
+            }
+        });
+
+        // Obtener y mostrar resultados
+        async function fetchResults() {
+            resultsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Cargando resultados...</td></tr>';
+            const q = query(collection(db, "results"), orderBy("examDate", "desc"));
+            const querySnapshot = await getDocs(q);
+            allResults = [];
+            querySnapshot.forEach((doc) => {
+                allResults.push({ id: doc.id, ...doc.data() });
+            });
+            renderResults(allResults);
+        }
+
+        function renderResults(results) {
+            resultsTableBody.innerHTML = '';
+            if (results.length === 0) {
+                 resultsTableBody.innerHTML = '<tr><td colspan="5" class="text-center p-4">No hay resultados todavía.</td></tr>';
+                 return;
+            }
+            results.forEach(result => {
+                const date = result.examDate.toDate().toLocaleString('es-MX');
+                const row = `
+                    <tr class="border-b">
+                        <td class="py-3 px-4">${result.fullName}</td>
+                        <td class="py-3 px-4 font-bold ${result.level === 'B2' ? 'text-green-600' : result.level === 'B1' ? 'text-blue-600' : 'text-orange-500'}">${result.level}</td>
+                        <td class="py-3 px-4">${result.score} / ${result.totalQuestions}</td>
+                        <td class="py-3 px-4">${date}</td>
+                        <td class="py-3 px-4">
+                            <button data-id="${result.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b bg-gray-50">
+                        <td colspan="5" class="p-4 text-sm text-gray-600">
+                            <strong class="text-gray-800">Respuesta de Writing:</strong><br>
+                            <p class="mt-1 whitespace-pre-wrap">${result.writingAnswer}</p>
+                        </td>
+                    </tr>
+                `;
+                resultsTableBody.innerHTML += row;
+            });
+
+            // Añadir event listeners a los nuevos botones de eliminar
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const docId = e.target.dataset.id;
+                    if (confirm('¿Estás seguro de que quieres eliminar este resultado? Esta acción no se puede deshacer.')) {
+                        await deleteDoc(doc(db, "results", docId));
+                        fetchResults(); // Volver a cargar los resultados
+                    }
+                });
+            });
+        }
+        
+        // Lógica de búsqueda
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredResults = allResults.filter(result => 
+                result.fullName.toLowerCase().includes(searchTerm)
+            );
+            renderResults(filteredResults);
+        });
+
+    </script>
+</body>
+</html>
