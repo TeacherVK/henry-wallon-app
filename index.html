@@ -181,7 +181,6 @@
             { type: 'writing', question: "What is your opinion on the importance of learning a second language? Discuss the advantages it can bring to a person's life and career." }
         ];
 
-        const startScreen = document.getElementById('start-screen'), testScreen = document.getElementById('test-screen'), resultsScreen = document.getElementById('results-screen'), reviewScreen = document.getElementById('review-screen'), startBtn = document.getElementById('start-btn'), userInfoForm = document.getElementById('user-info-form'), examTimeEl = document.getElementById('examTime'), timerEl = document.getElementById('timer'), questionContainer = document.getElementById('question-container'), progressBar = document.getElementById('progress-bar'), nextBtn = document.getElementById('next-btn'), prevBtn = document.getElementById('prev-btn'), reviewAnswersBtn = document.getElementById('review-answers-btn'), downloadPdfBtn = document.getElementById('download-pdf-btn'), reviewContainer = document.getElementById('review-container'), backToResultsBtn = document.getElementById('back-to-results-btn'), whatsappShareBtn = document.getElementById('whatsapp-share-btn'), modalCloseBtn = document.getElementById('modal-close-btn'), sectionModal = document.getElementById('section-modal'), modalTitle = document.getElementById('modal-title'), modalInstruction = document.getElementById('modal-instruction');
         let currentQuestionIndex = 0, userAnswers = new Array(questions.length).fill(null), timerInterval, testStartTime, userData = {}, finalResults = {}, lastShownSection = null;
         
         function renderQuestion(index) {
@@ -240,8 +239,7 @@
         window.saveWritingAnswer = (qIndex) => { userAnswers[qIndex] = document.getElementById('writing-answer').value; }
         function updateNavigation() { prevBtn.disabled = currentQuestionIndex === 0; prevBtn.classList.toggle('opacity-50', prevBtn.disabled); nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? 'Finalizar Examen' : 'Siguiente'; nextBtn.classList.toggle('bg-green-600', currentQuestionIndex === questions.length - 1); nextBtn.classList.toggle('hover:bg-green-700', currentQuestionIndex === questions.length - 1); nextBtn.classList.toggle('hw-blue-bg', currentQuestionIndex !== questions.length - 1); }
         function updateProgressBar() { progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`; }
-        nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
-        prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
+        
         function startTimer() { let timeLeft = testDurationMinutes * 60; timerInterval = setInterval(() => { timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { clearInterval(timerInterval); alert('¡Tiempo terminado!'); finishTest(); } }, 1000); }
         function startTest() { if (!userInfoForm.checkValidity()) { userInfoForm.reportValidity(); return; } userData = { fullName: document.getElementById('fullName').value, section: document.getElementById('section').value, school: document.getElementById('school').value, examTime: testStartTime.toLocaleString('es-MX') }; localStorage.setItem('henryWallonTestTaken', 'true'); startScreen.style.display = 'none'; testScreen.style.display = 'block'; renderQuestion(currentQuestionIndex); startTimer(); }
         function finishTest() { clearInterval(timerInterval); finalResults = calculateResults(); showResults(finalResults); saveResultsToFirestore(finalResults); }
@@ -296,9 +294,6 @@
             iframe.src = mailtoLink;
             document.body.appendChild(iframe);
             setTimeout(() => { document.body.removeChild(iframe); }, 1000);
-            
-            // Descargar PDF automáticamente
-            downloadPdfBtn.click();
         }
         async function saveResultsToFirestore(results) { const writingQuestionObject = questions.find(q => q.type === 'writing'); const writingAnswer = writingQuestionObject ? (userAnswers[questions.indexOf(writingQuestionObject)] || "No se proporcionó respuesta.") : "No se proporcionó respuesta."; try { await addDoc(collection(db, "results"), { fullName: userData.fullName, section: userData.section, school: userData.school, examDate: new Date(), score: results.score, totalQuestions: results.total, level: results.level, writingAnswer: writingAnswer }); } catch (e) { console.error("Error adding document: ", e); } }
         function checkTestStatus() { if (localStorage.getItem('henryWallonTestTaken')) { startBtn.textContent = 'Ya has realizado este examen'; startBtn.disabled = true; startBtn.classList.add('opacity-50'); } }
@@ -349,26 +344,32 @@
         }
 
         window.onload = () => {
+            // FIX: All DOM element selections and event listeners are now inside window.onload
+            const startBtn = document.getElementById('start-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const reviewAnswersBtn = document.getElementById('review-answers-btn');
+            const backToResultsBtn = document.getElementById('back-to-results-btn');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const startScreen = document.getElementById('start-screen');
+            const testScreen = document.getElementById('test-screen');
+            const resultsScreen = document.getElementById('results-screen');
+            const reviewScreen = document.getElementById('review-screen');
+            const userInfoForm = document.getElementById('user-info-form');
+            const examTimeEl = document.getElementById('examTime');
+            const timerEl = document.getElementById('timer');
+            const questionContainer = document.getElementById('question-container');
+            const progressBar = document.getElementById('progress-bar');
+            const reviewContainer = document.getElementById('review-container');
+            const whatsappShareBtn = document.getElementById('whatsapp-share-btn');
+            const sectionModal = document.getElementById('section-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalInstruction = document.getElementById('modal-instruction');
+
             const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAEAASURBVHgB7N15lFTV+T/wn3t3l3Z3d3d3d3d3d3d3l3Z3d5e7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u-D-Y1CNWmVrg';
             startBtn.addEventListener('click', startTest);
-            downloadPdfBtn.addEventListener('click', () => {
-                const doc = new jsPDF();
-                if (logoBase64) { doc.addImage(logoBase64, 'PNG', 15, 10, 50, 25); }
-                doc.setFontSize(22); doc.text("Reporte de Placement Test", 105, 25, { align: 'center' });
-                doc.setFontSize(12); doc.text(`Nombre: ${userData.fullName}`, 15, 50); doc.text(`Escuela: ${userData.school}`, 15, 57); doc.text(`Fecha: ${new Date().toLocaleDateString('es-MX')}`, 15, 64);
-                doc.setLineWidth(0.5); doc.line(15, 70, 195, 70);
-                doc.setFontSize(18); doc.text("Resultado Obtenido", 105, 85, { align: 'center' });
-                doc.setFontSize(40); doc.setTextColor(0, 51, 102); doc.text(finalResults.level, 105, 105, { align: 'center' });
-                doc.setTextColor(0, 0, 0); doc.setFontSize(12); doc.text(`Puntuación: ${finalResults.score} de ${finalResults.total}`, 105, 115, { align: 'center' });
-                doc.setFontSize(11); doc.text(finalResults.description, 105, 122, { align: 'center' });
-                doc.line(15, 130, 195, 130);
-                doc.setFontSize(14); doc.text("Recomendaciones para Mejorar", 15, 140);
-                doc.setFontSize(10);
-                const recommendationsText = getRecommendations(finalResults.level);
-                const splitText = doc.splitTextToSize(recommendationsText, 180);
-                doc.text(splitText, 15, 148);
-                doc.save(`Reporte_Henry_Wallon_${userData.fullName.replace(/ /g, '_')}.pdf`);
-            });
+            nextBtn.addEventListener('click', () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; renderQuestion(currentQuestionIndex); } else { finishTest(); } });
+            prevBtn.addEventListener('click', () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(currentQuestionIndex); } });
             reviewAnswersBtn.addEventListener('click', () => { resultsScreen.style.display = 'none'; reviewScreen.style.display = 'block'; renderReview(); });
             backToResultsBtn.addEventListener('click', () => { reviewScreen.style.display = 'none'; resultsScreen.style.display = 'block'; });
             modalCloseBtn.addEventListener('click', () => { sectionModal.style.display = 'none'; });
@@ -381,4 +382,5 @@
     </script>
 </body>
 </html>
+
 
